@@ -1,0 +1,27 @@
+version: '3'
+services:
+  secret:
+    image: ssst0n3/docker_secret:v1.4.1
+    environment:
+      - "DIR_SECRET=/secret"
+      - "SECRET=MYSQL_PASSWORD_FILE,MYSQL_ROOT_PASSWORD_FILE"
+    volumes:
+      - source-analysis-system_secret:/secret
+  db:
+    depends_on:
+      - secret
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - source-analysis-system_db:/var/lib/mysql
+      - source-analysis-system_secret:/secret
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /secret/MYSQL_ROOT_PASSWORD_FILE
+      MYSQL_PASSWORD_FILE: /secret/MYSQL_PASSWORD_FILE
+      MYSQL_USER: source-analysis-system
+      MYSQL_DATABASE: source-analysis-system
+
+volumes:
+  source-analysis-system_db:
+  source-analysis-system_secret:

@@ -1,18 +1,15 @@
 <template>
   <div class="hello">
-    <AnalysisItem/>
-    <MarkdownCard/>
-    <NodeItem/>
+    <NodeMatrix/>
   </div>
 </template>
 
 <script>
-import AnalysisItem from "@/components/Analysis/AnalysisItem";
-import MarkdownCard from "@/components/Analysis/MarkdownCard";
-import NodeItem from "@/components/NodeItem";
+import NodeMatrix from "@/components/NodeMatrix";
+
 export default {
   name: 'HelloWorld',
-  components: {NodeItem, MarkdownCard, AnalysisItem},
+  components: {NodeMatrix, },
   props: {
     msg: String
   }

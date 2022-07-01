@@ -7,6 +7,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
+import consts from "@/util/const";
+import lightweightRestful from "vue-lightweight_restful";
+lightweightRestful.api.initClient(consts.BaseUrl)
+
+
 Vue.config.productionTip = false
 
 new Vue({

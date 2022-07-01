@@ -2,7 +2,7 @@
   <div>
     <b-card
         tag="article"
-        class="mb-2 col-3 "
+        class="mb-2"
     >
       <b-card-title>
         WithMounts()

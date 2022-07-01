@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card class="col-3">
+    <b-card>
       <div v-html="markdownToHtml"></div>
     </b-card>
   </div>
@@ -13,7 +13,8 @@ export default {
   data() {
     return {
       markdown:  `# Hello World
-添加IPC挂载点至mount列表。
+添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。
+
 
 https://github.com/moby/moby/blob/v20.10.14/container/container_unix.go#L200
 

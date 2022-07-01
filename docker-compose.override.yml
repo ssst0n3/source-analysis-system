@@ -1,0 +1,16 @@
+version: '3'
+services:
+  source-analysis-system:
+    build: .
+    environment:
+      - "DEBUG=true"
+
+  secret:
+    environment:
+      - "DEVELOPMENT=true"
+    volumes:
+      - /tmp/secret:/tmp/secret
+
+  db:
+    ports:
+      - "16036:3306"
