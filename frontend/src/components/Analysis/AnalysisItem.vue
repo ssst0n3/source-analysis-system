@@ -25,18 +25,23 @@
 <script>
 export default {
   name: "AnalysisItem",
+  props: {
+    note: String,
+    link: String,
+    code: String,
+  },
   data() {
     return {
-      note: "添加IPC挂载点至mount列表。",
-      link: "https://github.com/moby/moby/blob/v20.10.14/container/container_unix.go#L200",
-      code: `func WithMounts(daemon *Daemon, c *container.Container) coci.SpecOpts {
-  return func(ctx context.Context, _ coci.Client, _ *containers.Container, s *coci.Spec) (err error) {
-    ...
-    if !c.HostConfig.IpcMode.IsPrivate() && !c.HostConfig.IpcMode.IsEmpty() {
-    ms = append(ms, c.IpcMounts()...)
-  }
-  ...
-}`,
+      // note: "添加IPC挂载点至mount列表。",
+      // link: "https://github.com/moby/moby/blob/v20.10.14/container/container_unix.go#L200",
+//       code: `func WithMounts(daemon *Daemon, c *container.Container) coci.SpecOpts {
+//   return func(ctx context.Context, _ coci.Client, _ *containers.Container, s *coci.Spec) (err error) {
+//     ...
+//     if !c.HostConfig.IpcMode.IsPrivate() && !c.HostConfig.IpcMode.IsEmpty() {
+//     ms = append(ms, c.IpcMounts()...)
+//   }
+//   ...
+// }`,
     }
   }
 }

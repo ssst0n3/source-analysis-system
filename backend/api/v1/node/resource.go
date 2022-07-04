@@ -13,11 +13,19 @@ const ResourceName = "node"
 
 var Resource = lightweight_api.NewResource(ResourceName, model.SchemaNode.Table, model.Node{}, "")
 
-func Matrix(c *gin.Context) {
+func ParseId(c *gin.Context) (id uint64, err error) {
 	rootId := c.Param("id")
-	id, err := strconv.ParseUint(rootId, 10, 64)
+	id, err = strconv.ParseUint(rootId, 10, 64)
 	if err != nil {
 		lightweight_api.HandleStatusBadRequestError(c, err)
+		return
+	}
+	return
+}
+
+func Matrix(c *gin.Context) {
+	id, err := ParseId(c)
+	if err != nil {
 		return
 	}
 	matrix, err := db.NodeMatrix(uint(id))
@@ -26,4 +34,23 @@ func Matrix(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, matrix)
+}
+
+func UpdateMarkdown(c *gin.Context) {
+	id, err := ParseId(c)
+	if err != nil {
+		return
+	}
+	var body model.UpdateMarkdownBody
+	err = c.BindJSON(&body)
+	if err != nil {
+		lightweight_api.HandleStatusBadRequestError(c, err)
+		return
+	}
+	err = db.UpdateMarkdown(uint(id), body.Markdown)
+	if err != nil {
+		lightweight_api.HandleInternalServerError(c, err)
+		return
+	}
+	c.Status(http.StatusOK)
 }

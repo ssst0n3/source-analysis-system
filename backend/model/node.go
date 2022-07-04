@@ -14,6 +14,11 @@ type Node struct {
 	GitUrl          string `json:"git_url"`
 	Note            string `json:"note"`
 	Code            string `json:"code"`
+	Markdown        string `json:"markdown"`
+}
+
+type UpdateMarkdownBody struct {
+	Markdown string `json:"markdown"`
 }
 
 var SchemaNode schema.Schema

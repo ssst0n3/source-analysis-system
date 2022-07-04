@@ -15,10 +15,14 @@ export default {
     api: {
         v1: {
             node: {
+                node: api.v1.node,
                 matrix: (id) => `${api.v1.node}/${id}`,
+                update_markdown: (id) => `${api.v1.node}/${id}`,
             },
             node_relation: {
-                list_by_root: (id) => `${api.v1.node_relation}/${id}`
+                list_by_root: (id) => `${api.v1.node_relation}/${id}`,
+                node_relation: api.v1.node_relation,
+                update_node_relation_by_node: (id) => `${api.v1.node_relation}/node/${id}`,
             }
         }
     }

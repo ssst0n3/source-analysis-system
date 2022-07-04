@@ -74,6 +74,17 @@ func NodeMatrix(root uint) (matrix [][]model.Node, err error) {
 	nodes[root] = rootNode
 	m := model.NewMatrix(root, nodeRelations)
 	m.ChildRecursive(0)
+	m.Print()
 	matrix = m.DumpNode(nodes)
+	return
+}
+
+func UpdateMarkdown(id uint, markdown string) (err error) {
+	err = DB.Debug().Model(model.Node{}).Where("id", id).Update(
+		model.SchemaNode.FieldsByName["Markdown"].DBName, markdown).Error
+	if err != nil {
+		awesome_error.CheckErr(err)
+		return
+	}
 	return
 }

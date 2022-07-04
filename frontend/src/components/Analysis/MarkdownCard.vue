@@ -1,44 +1,60 @@
 <template>
   <div>
     <b-card>
-      <div v-html="markdownToHtml"></div>
+      <div style="width: 100%" v-html="markdownToHtml" @dblclick="$bvModal.show('node-'+id)"/>
     </b-card>
+    <b-modal :id="'node-'+id" hide-footer size="xl">
+      <MarkdownEditor ref="markdown_editor" :markdown="markdown"/>
+      <div id="panel" class="float-right">
+        <b-btn @click="save">save</b-btn>
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import {marked} from 'marked';
+import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
+import lightweightRestful from "vue-lightweight_restful";
+import consts from "@/util/const";
+
 export default {
   name: "MarkdownCard",
+  components: {MarkdownEditor},
+  props: {
+    id: String,
+    markdown: String,
+  },
   data() {
-    return {
-      markdown:  `# Hello World
-添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。添加IPC挂载点至mount列表。
-
-
-https://github.com/moby/moby/blob/v20.10.14/container/container_unix.go#L200
-
-\`\`\`
-func WithMounts(daemon *Daemon, c *container.Container) coci.SpecOpts {
-return func(ctx context.Context, _ coci.Client, _ *containers.Container, s *coci.Spec) (err error) {
-  ...
-  if !c.HostConfig.IpcMode.IsPrivate() && !c.HostConfig.IpcMode.IsEmpty() {
-    ms = append(ms, c.IpcMounts()...)
-  }
-  ...
-}
-\`\`\`
-`,
-    };
+    return {};
   },
   computed: {
-    markdownToHtml(){
+    markdownToHtml() {
       return marked(this.markdown);
+    }
+  },
+  methods: {
+    async save() {
+      await lightweightRestful.api.put(consts.api.v1.node.update_markdown(this.id), null, {
+        markdown: this.$refs.markdown_editor.edit
+      }, {
+        caller: this,
+        success_msg: 'update success'
+      })
+      this.$bvModal.hide('node-'+this.id)
     }
   }
 }
 </script>
 
 <style scoped>
+/deep/ .modal-dialog {
+  width: 90%;
+  max-width: 100%;
+  height: 100%;
+}
 
+/deep/ .modal-content {
+  height: 100%;
+}
 </style>
