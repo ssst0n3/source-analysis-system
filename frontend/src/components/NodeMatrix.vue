@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-for="(col, index) in nodes" :key="`col-${index}`" style="white-space: nowrap" class="mt-5">
+    <div v-for="(col, index) in nodes" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
       <div @mouseover="mouseover"
            :ref="'node-'+node.ID" :id="'node-'+node.ID" v-for="(node, index2) in col"
            :key="`col-${index}-row-${index2}`"
-           style="display: inline-block; width: 500px"
+           style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
         <b-btn @click="next(node.ID)">Next</b-btn>
         <b-btn @click="call(node.ID)" class="ml-2">Call</b-btn>
@@ -124,7 +124,8 @@ export default {
               target: 'node-' + nodeRelation.child,
               anchor: ['Right', 'Left'],
               endpoint: 'Blank',
-              connector: ['Flowchart'],
+              // connector: ['Flowchart'],
+              connector: ['Straight'],
               overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
               paintStyle: {stroke: '#909393', strokeWidth: 2}
             })
@@ -135,7 +136,8 @@ export default {
               target: 'node-' + nodeRelation.next,
               anchor: ['Bottom', 'Top'],
               endpoint: 'Blank',
-              connector: ['Flowchart'],
+              // connector: ['Flowchart'],
+              connector: ['Straight'],
               overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
               paintStyle: {stroke: '#909393', strokeWidth: 2}
             })
