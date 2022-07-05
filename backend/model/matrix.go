@@ -48,7 +48,7 @@ func (m *Matrix) ChildRecursive(x int) {
 	for y := m.y - 1; y >= 0; y-- {
 		id := m.matrix[x][y]
 		if id == 0 {
-			return
+			continue
 		}
 		node := m.nodeRelations[id]
 		if node.Child == 0 {
