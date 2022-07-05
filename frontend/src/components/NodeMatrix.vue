@@ -42,17 +42,39 @@ export default {
       nodeRelations: [],
       mode: 0,
       baseNode: 0,
+      plumbInstance: null,
     }
   },
   async created() {
     await this.nodeMatrix(this.root)
+    await this.listNodeRelationsByRoot(this.root)
   },
 
-  async mounted() {
-    await this.listNodeRelationsByRoot(this.root)
-    this.drawLine()
+  mounted() {
+    this.plumbInstance = jsPlumb.getInstance()
+    // await this.listNodeRelationsByRoot(this.root)
+  },
+  watch: {
+    nodeRelations: async function () {
+      this.$nextTick(() => {
+        this.drawLine()
+      })
+    }
   },
   methods: {
+    async refreshWorld() {
+      this.plumbInstance.deleteEveryConnection()
+      this.plumbInstance.deleteEveryEndpoint()
+      // this.renderComponent = false
+      await this.nodeMatrix(this.root)
+      await this.listNodeRelationsByRoot(this.root)
+      // this.$nextTick(() => {
+      //   this.renderComponent = true;
+      // });
+      // this.$nextTick(() => {
+      //   this.drawLine()
+      // })
+    },
     async save() {
       let response = await lightweightRestful.api.post(consts.api.v1.node.node, null, {
         markdown: this.$refs.markdown_editor_common.edit
@@ -76,6 +98,7 @@ export default {
         caller: this,
       })
       this.$bvModal.hide('node-common')
+      await this.refreshWorld()
     },
     next(id) {
       this.baseNode = id
@@ -92,12 +115,11 @@ export default {
     },
     drawLine() {
       let that = this
-      let plumbInstance = jsPlumb.getInstance()
-      plumbInstance.ready(function () {
-        console.log("node_relations:", that.nodeRelations)
+      // let plumbInstance = jsPlumb.getInstance()
+      that.plumbInstance.ready(function () {
         that.nodeRelations.forEach(nodeRelation => function () {
           if (nodeRelation.child !== 0) {
-            plumbInstance.connect({
+            that.plumbInstance.connect({
               source: 'node-' + nodeRelation.node,
               target: 'node-' + nodeRelation.child,
               anchor: ['Right', 'Left'],
@@ -108,7 +130,7 @@ export default {
             })
           }
           if (nodeRelation.next !== 0) {
-            plumbInstance.connect({
+            that.plumbInstance.connect({
               source: 'node-' + nodeRelation.node,
               target: 'node-' + nodeRelation.next,
               anchor: ['Bottom', 'Top'],
@@ -129,6 +151,7 @@ export default {
     async listNodeRelationsByRoot(id) {
       this.nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
         caller: this,
+        success_msg: 'list node_relation successfully'
       })
     },
   },

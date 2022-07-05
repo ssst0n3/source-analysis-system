@@ -39,7 +39,7 @@ export default {
         markdown: this.$refs.markdown_editor.edit
       }, {
         caller: this,
-        success_msg: 'update success'
+        success_msg: 'update successfully'
       })
       this.$bvModal.hide('node-'+this.id)
     }
