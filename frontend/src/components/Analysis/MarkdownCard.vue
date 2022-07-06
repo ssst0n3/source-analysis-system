@@ -42,6 +42,7 @@ export default {
         success_msg: 'update successfully'
       })
       this.$bvModal.hide('node-'+this.id)
+      this.$emit('update_node')
     }
   }
 }

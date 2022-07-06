@@ -8,7 +8,7 @@
            class="ml-5" :class="{hidden: node.ID === 0}">
         <b-btn @click="next(node.ID)">Next</b-btn>
         <b-btn @click="call(node.ID)" class="ml-2">Call</b-btn>
-        <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()"
+        <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()" v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
         <AnalysisItem v-else/>
       </div>
