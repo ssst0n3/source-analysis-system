@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import NodeMatrix from "@/components/NodeMatrix";
+import NodeMatrix from "@/components/Node/NodeMatrix";
 
 export default {
   name: 'HelloWorld',

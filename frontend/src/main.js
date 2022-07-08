@@ -11,9 +11,11 @@ import consts from "@/util/const";
 import lightweightRestful from "vue-lightweight_restful";
 lightweightRestful.api.initClient(consts.BaseUrl)
 
+import router from '@/router'
 
 Vue.config.productionTip = false
 
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')

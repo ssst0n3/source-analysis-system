@@ -29,7 +29,7 @@ func InitRouter() *gin.Engine {
 	}
 	//frontend
 	{
-		router.Use(static.Serve("/", static.LocalFile("./html", false)))
+		router.Use(static.Serve("/", static.LocalFile("./dist", false)))
 	}
 	// ping pong
 	{

@@ -16,6 +16,6 @@ func Init() {
 	awesome_error.CheckFatal(os.Setenv(lightweight_api.EnvDbUser, "source-analysis-system"))
 	awesome_error.CheckFatal(os.Setenv(lightweight_api.EnvDbPasswordFile, "/tmp/secret/MYSQL_PASSWORD_FILE"))
 	awesome_error.CheckFatal(os.Setenv(consts.EnvDirSecret, "/tmp/secret"))
-	config.LocalListenPort = "16080"
+	config.LocalListenPort = "16081"
 	config.AllowOrigins = append(config.AllowOrigins, "http://127.0.0.1:8080")
 }

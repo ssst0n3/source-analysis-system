@@ -14,7 +14,8 @@
     "jsplumb": "^2.15.6",
     "marked": "^4.0.17",
     "vue": "^2.6.14",
-    "vue-lightweight_restful": "^1.1.19"
+    "vue-lightweight_restful": "^1.1.19",
+    "vue-router": "^3.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

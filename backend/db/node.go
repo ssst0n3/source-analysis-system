@@ -5,14 +5,35 @@ import (
 	"github.com/ssst0n3/source-analysis-system/model"
 )
 
-func mapNodesInIds(ids []uint) (nodes map[uint]model.Node, err error) {
-	nodes = map[uint]model.Node{}
-	var nodesList []model.Node
-	err = DB.Model(model.Node{}).Find(&nodesList, ids).Error
+func listNodesIdByRoot(root uint) (ids []uint, err error) {
+	err = DB.Model(model.NodeRelation{}).Select(
+		model.SchemaNodeRelation.FieldsByName["Node"].DBName,
+	).Where(
+		model.SchemaNodeRelation.FieldsByName["Root"].DBName, root,
+	).Find(&ids).Error
 	if err != nil {
 		awesome_error.CheckErr(err)
 		return
 	}
+	return
+}
+
+func ListNodesByRoot(root uint) (nodes []model.Node, err error) {
+	ids, err := listNodesIdByRoot(root)
+	if err != nil {
+		return
+	}
+	err = DB.Model(model.Node{}).Find(&nodes, ids).Error
+	if err != nil {
+		awesome_error.CheckErr(err)
+		return
+	}
+	return
+}
+
+func mapNodesByRoot(root uint) (nodes map[uint]model.Node, err error) {
+	nodes = map[uint]model.Node{}
+	nodesList, err := ListNodesByRoot(root)
 	for _, node := range nodesList {
 		nodes[node.ID] = node
 	}
@@ -54,17 +75,10 @@ func NodeMatrix(root uint) (matrix [][]model.Node, err error) {
 	if err != nil {
 		return
 	}
-	var ids []uint
-	err = DB.Model(model.NodeRelation{}).Select(
-		model.SchemaNodeRelation.FieldsByName["Node"].DBName,
-	).Where(
-		model.SchemaNodeRelation.FieldsByName["Root"].DBName, root,
-	).Find(&ids).Error
+	nodes, err := mapNodesByRoot(root)
 	if err != nil {
-		awesome_error.CheckErr(err)
 		return
 	}
-	nodes, err := mapNodesInIds(ids)
 	var rootNode model.Node
 	err = DB.Model(model.Node{}).Where("ID", root).First(&rootNode).Error
 	if err != nil {

@@ -1,12 +1,22 @@
 <template>
   <div>
+    <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
+      <template #toast-title>
+        <div class="d-flex flex-grow-1 align-items-baseline">
+          <b-img blank blank-color="#ff5555" class="mr-2" width="12" height="12"></b-img>
+          <strong class="mr-auto">Loading</strong>
+          <small class="text-muted mr-2">42 seconds ago</small>
+        </div>
+      </template>
+      <b-spinner/>
+    </b-toast>
     <div v-for="(col, index) in nodes" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
       <div @mouseover="mouseover"
            :ref="'node-'+node.ID" :id="'node-'+node.ID" v-for="(node, index2) in col"
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <b-btn @click="next(node.ID)">Next</b-btn>
+        <b-btn @click="next(node.ID)" >Next</b-btn>
         <b-btn @click="call(node.ID)" class="ml-2">Call</b-btn>
         <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()" v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
@@ -37,12 +47,19 @@ export default {
   components: {AnalysisItem, MarkdownCard, MarkdownEditor},
   data() {
     return {
-      root: 1,
+      root: parseInt(this.$route.params.id),
       nodes: [],
       nodeRelations: [],
       mode: 0,
       baseNode: 0,
       plumbInstance: null,
+      nodeLoading: false,
+      nodeRelationsLoading: false,
+    }
+  },
+  computed: {
+    loading() {
+      return this.nodeLoading || this.nodeRelationsLoading
     }
   },
   async created() {
@@ -146,15 +163,20 @@ export default {
       })
     },
     async nodeMatrix(id) {
+      this.nodeLoading = true
       this.nodes = await lightweightRestful.api.get(consts.api.v1.node.matrix(id), null, {
         caller: this,
+        success_msg: 'list node matrix successfully'
       })
+      this.nodeLoading = false
     },
     async listNodeRelationsByRoot(id) {
+      this.nodeRelationsLoading = true
       this.nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
         caller: this,
         success_msg: 'list node_relation successfully'
       })
+      this.nodeRelationsLoading = false
     },
   },
 }

@@ -54,3 +54,12 @@ func UpdateMarkdown(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
+
+func ListNodesByRoot(c *gin.Context) {
+	nodes, err := db.ListNodesByRoot(0)
+	if err != nil {
+		lightweight_api.HandleInternalServerError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, nodes)
+}
