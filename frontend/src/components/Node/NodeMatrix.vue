@@ -16,9 +16,13 @@
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <b-btn @click="next(node.ID)">Next</b-btn>
-        <b-btn @click="call(node.ID)" class="ml-2">Call</b-btn>
-        <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()"
+        <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light" triggers="hover">
+          <div style="">
+            <b-btn @click="next(node.ID)" v-if="node.next===0">Next</b-btn>
+            <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0">Call</b-btn>
+          </div>
+        </b-tooltip>
+        <MarkdownCard style="white-space: normal" :id="'card-'+node.ID" :markdown="node.markdown.toString()"
                       v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
         <AnalysisItem v-else/>
@@ -74,6 +78,10 @@ export default {
   mounted() {
     this.plumbInstance = jsPlumb.getInstance()
     // await this.listNodeRelationsByRoot(this.root)
+  },
+  destroyed() {
+    this.plumbInstance.deleteEveryConnection()
+    this.plumbInstance.deleteEveryEndpoint()
   },
   watch: {
     nodeMatrix: async function () {
@@ -234,5 +242,10 @@ export default {
 
 /*/deep/ code {*/
 /*  display: none;*/
+/*}*/
+
+
+/*/deep/ .tooltip-inner {*/
+/*  background-color: rgba(0,0,0,0);*/
 /*}*/
 </style>
