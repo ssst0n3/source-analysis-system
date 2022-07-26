@@ -56,7 +56,11 @@ func UpdateMarkdown(c *gin.Context) {
 }
 
 func ListNodesByRoot(c *gin.Context) {
-	nodes, err := db.ListNodesByRoot(0)
+	id, err := ParseId(c)
+	if err != nil {
+		return
+	}
+	nodes, err := db.ListNodesByRoot(uint(id), true)
 	if err != nil {
 		lightweight_api.HandleInternalServerError(c, err)
 		return

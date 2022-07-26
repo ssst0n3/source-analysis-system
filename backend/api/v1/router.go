@@ -15,8 +15,8 @@ func InitRouter(router *gin.Engine) {
 	}
 	nodeGroup := router.Group(node.Resource.BaseRelativePath)
 	{
-		nodeGroup.GET("", node.ListNodesByRoot)
-		nodeGroup.GET("/:id", node.Matrix)
+		nodeGroup.GET("/list/:id", node.ListNodesByRoot)
+		nodeGroup.GET("/matrix/:id", node.Matrix)
 		nodeGroup.PUT("/:id", node.UpdateMarkdown)
 		nodeGroup.POST("", node.Resource.CreateResource)
 	}

@@ -18,7 +18,7 @@ func listNodesIdByRoot(root uint) (ids []uint, err error) {
 	return
 }
 
-func ListNodesByRoot(root uint) (nodes []model.Node, err error) {
+func ListNodesByRoot(root uint, withRoot bool) (nodes []model.Node, err error) {
 	ids, err := listNodesIdByRoot(root)
 	if err != nil {
 		return
@@ -28,12 +28,21 @@ func ListNodesByRoot(root uint) (nodes []model.Node, err error) {
 		awesome_error.CheckErr(err)
 		return
 	}
+	if withRoot && root != 0 {
+		var rootNode model.Node
+		err = DB.Model(model.Node{}).First(&rootNode, root).Error
+		if err != nil {
+			awesome_error.CheckErr(err)
+			return
+		}
+		nodes = append(nodes, rootNode)
+	}
 	return
 }
 
 func mapNodesByRoot(root uint) (nodes map[uint]model.Node, err error) {
 	nodes = map[uint]model.Node{}
-	nodesList, err := ListNodesByRoot(root)
+	nodesList, err := ListNodesByRoot(root, false)
 	for _, node := range nodesList {
 		nodes[node.ID] = node
 	}
