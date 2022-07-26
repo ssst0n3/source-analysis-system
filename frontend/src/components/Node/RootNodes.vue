@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     async listNodesByRoot() {
-      this.nodes = await lightweightRestful.api.get(consts.api.v1.node.node, null, {
+      this.nodes = await lightweightRestful.api.get(consts.api.v1.node.list(0), null, {
         caller: this,
       })
     },

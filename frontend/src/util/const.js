@@ -16,7 +16,8 @@ export default {
         v1: {
             node: {
                 node: api.v1.node,
-                matrix: (id) => `${api.v1.node}/${id}`,
+                list: (id) => `${api.v1.node}/list/${id}`,
+                matrix: (id) => `${api.v1.node}/matrix/${id}`,
                 update_markdown: (id) => `${api.v1.node}/${id}`,
             },
             node_relation: {

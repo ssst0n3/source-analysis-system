@@ -10,15 +10,16 @@
       </template>
       <b-spinner/>
     </b-toast>
-    <div v-for="(col, index) in nodes" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
+    <div v-for="(col, index) in nodeMatrix" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
       <div @mouseover="mouseover"
            :ref="'node-'+node.ID" :id="'node-'+node.ID" v-for="(node, index2) in col"
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <b-btn @click="next(node.ID)" >Next</b-btn>
+        <b-btn @click="next(node.ID)">Next</b-btn>
         <b-btn @click="call(node.ID)" class="ml-2">Call</b-btn>
-        <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()" v-on:update_node="refreshWorld"
+        <MarkdownCard style="white-space: normal" :id="node.ID.toString()" :markdown="node.markdown.toString()"
+                      v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
         <AnalysisItem v-else/>
       </div>
@@ -33,6 +34,8 @@
 </template>
 
 <script>
+import Matrix from "@/util/matrix";
+
 const modeNext = 1
 const modeCall = 2
 import consts from "@/util/const";
@@ -48,8 +51,10 @@ export default {
   data() {
     return {
       root: parseInt(this.$route.params.id),
-      nodes: [],
+      nodesMap: {},
+      nodeMatrix: [],
       nodeRelations: [],
+      nodeRelationsMap: {},
       mode: 0,
       baseNode: 0,
       plumbInstance: null,
@@ -63,8 +68,7 @@ export default {
     }
   },
   async created() {
-    await this.nodeMatrix(this.root)
-    await this.listNodeRelationsByRoot(this.root)
+    await this.refreshData()
   },
 
   mounted() {
@@ -72,19 +76,25 @@ export default {
     // await this.listNodeRelationsByRoot(this.root)
   },
   watch: {
-    nodeRelations: async function () {
+    nodeMatrix: async function () {
       this.$nextTick(() => {
         this.drawLine()
       })
     }
   },
   methods: {
+    async refreshData() {
+      await this.listNodes(this.root)
+      await this.listNodeRelationsByRoot(this.root)
+      let matrix = new Matrix.Matrix(this.root, this.nodeRelationsMap)
+      matrix.childRecursive(0)
+      this.nodeMatrix = matrix.dumpNode(this.nodesMap)
+    },
     async refreshWorld() {
       this.plumbInstance.deleteEveryConnection()
       this.plumbInstance.deleteEveryEndpoint()
       // this.renderComponent = false
-      await this.nodeMatrix(this.root)
-      await this.listNodeRelationsByRoot(this.root)
+      await this.refreshData()
       // this.$nextTick(() => {
       //   this.renderComponent = true;
       // });
@@ -162,11 +172,14 @@ export default {
         }())
       })
     },
-    async nodeMatrix(id) {
+    async listNodes(id) {
       this.nodeLoading = true
-      this.nodes = await lightweightRestful.api.get(consts.api.v1.node.matrix(id), null, {
+      let nodes = await lightweightRestful.api.get(consts.api.v1.node.list(id), null, {
         caller: this,
         success_msg: 'list node matrix successfully'
+      })
+      nodes.forEach(node => {
+        this.nodesMap[node.ID]=node
       })
       this.nodeLoading = false
     },
@@ -175,6 +188,9 @@ export default {
       this.nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
         caller: this,
         success_msg: 'list node_relation successfully'
+      })
+      this.nodeRelations.forEach(nodeRelation => {
+        this.nodeRelationsMap[nodeRelation.node]=nodeRelation
       })
       this.nodeRelationsLoading = false
     },
