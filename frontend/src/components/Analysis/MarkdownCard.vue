@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-card>
-      <div style="width: 100%" v-html="markdownToHtml" @dblclick="$bvModal.show('node-'+id)"/>
+      <div style="width: 100%" v-html="markdownToHtml" @dblclick="$bvModal.show('modal-node-'+nodeId)"/>
     </b-card>
-    <b-modal :id="'node-'+id" hide-footer size="xl">
+    <b-modal :id="'modal-node-'+nodeId" hide-footer size="xl">
       <MarkdownEditor ref="markdown_editor" :markdown="markdown"/>
       <div id="panel" class="float-right">
         <b-btn @click="save">save</b-btn>
@@ -22,7 +22,7 @@ export default {
   name: "MarkdownCard",
   components: {MarkdownEditor},
   props: {
-    id: String,
+    nodeId: String,
     markdown: String,
   },
   data() {
@@ -35,13 +35,13 @@ export default {
   },
   methods: {
     async save() {
-      await lightweightRestful.api.put(consts.api.v1.node.update_markdown(this.id), null, {
+      await lightweightRestful.api.put(consts.api.v1.node.update_markdown(this.nodeId), null, {
         markdown: this.$refs.markdown_editor.edit
       }, {
         caller: this,
         success_msg: 'update successfully'
       })
-      this.$bvModal.hide('node-'+this.id)
+      this.$bvModal.hide('modal-node-'+this.nodeId)
       this.$emit('update_node')
     }
   }

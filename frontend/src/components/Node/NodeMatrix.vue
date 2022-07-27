@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TableOfContent :toc="toc"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -17,12 +18,12 @@
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
         <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light" triggers="hover">
-          <div style="">
+          <div>
             <b-btn @click="next(node.ID)" v-if="node.next===0">Next</b-btn>
             <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0">Call</b-btn>
           </div>
         </b-tooltip>
-        <MarkdownCard style="white-space: normal" :id="'card-'+node.ID" :markdown="node.markdown.toString()"
+        <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID" :markdown="node.markdown.toString()"
                       v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
         <AnalysisItem v-else/>
@@ -48,10 +49,11 @@ import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
+import TableOfContent from "@/components/TableOfContent";
 
 export default {
   name: "NodeMatrix",
-  components: {AnalysisItem, MarkdownCard, MarkdownEditor},
+  components: {TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   data() {
     return {
       root: parseInt(this.$route.params.id),
@@ -64,6 +66,7 @@ export default {
       plumbInstance: null,
       nodeLoading: false,
       nodeRelationsLoading: false,
+      toc: [],
     }
   },
   computed: {
@@ -77,6 +80,9 @@ export default {
 
   mounted() {
     this.plumbInstance = jsPlumb.getInstance()
+    // this.$nextTick(() => {
+    //   console.log(document.getElementsByTagName('h1'))
+    // })
     // await this.listNodeRelationsByRoot(this.root)
   },
   destroyed() {
@@ -94,9 +100,11 @@ export default {
     async refreshData() {
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
-      let matrix = new Matrix.Matrix(this.root, this.nodeRelationsMap)
+      let matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
       matrix.childRecursive(0)
-      this.nodeMatrix = matrix.dumpNode(this.nodesMap)
+      this.nodeMatrix = matrix.dumpNode()
+      matrix.generateToc(this.root)
+      this.toc = matrix.toc
     },
     async refreshWorld() {
       this.plumbInstance.deleteEveryConnection()
@@ -239,6 +247,7 @@ export default {
 /deep/ .modal-content {
   height: 100%;
 }
+
 
 /*/deep/ code {*/
 /*  display: none;*/
