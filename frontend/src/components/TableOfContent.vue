@@ -1,0 +1,62 @@
+<template>
+  <div>
+    <b-button class="toc-btn" v-b-toggle.sidebar-toc>
+      <b-icon icon="justify"/>
+    </b-button>
+    <b-sidebar id="sidebar-toc" title="Toc" right shadow>
+      <div class="px-3 py-2">
+        <ul>
+          <li :class="'toc-'+h.nodeName.toLowerCase()" v-for="(h, index) in toc" :key="`header-${index}`">
+            <a :href="'#'+h.id">{{h.innerText}}</a>
+          </li>
+        </ul>
+      </div>
+    </b-sidebar>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "TableOfContent",
+  props: {
+    toc: Array,
+  },
+  data() {
+    return {
+      headings: [
+        {
+          nodeName: "h1",
+          innerText: "heading"
+        }
+      ]
+    }
+  },
+  mounted() {
+    // this.$nextTick(() => {
+    //   this.find_headings()
+    // })
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style scoped>
+.toc-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.toc-h3 {
+  margin-left: 10px;
+}
+
+.toc-h4 {
+  margin-left: 20px;
+}
+
+</style>
