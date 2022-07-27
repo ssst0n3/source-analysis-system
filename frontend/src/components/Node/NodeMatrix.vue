@@ -20,7 +20,9 @@
         <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light" triggers="hover">
           <div>
             <b-btn @click="next(node.ID)" v-if="node.next===0">Next</b-btn>
+            <b-btn variant="light" v-else><a :href="'#card-'+node.next">Next</a></b-btn>
             <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0">Call</b-btn>
+            <b-btn variant="light" v-else><a :href="'#card-'+node.child">Call</a></b-btn>
           </div>
         </b-tooltip>
         <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID" :markdown="node.markdown.toString()"
