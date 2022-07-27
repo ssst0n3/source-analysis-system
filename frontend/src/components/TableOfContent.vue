@@ -59,4 +59,11 @@ export default {
   margin-left: 20px;
 }
 
+.toc-h5 {
+  margin-left: 30px;
+}
+
+.toc-h6 {
+  margin-left: 40px;
+}
 </style>
