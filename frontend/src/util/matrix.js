@@ -129,6 +129,7 @@ class Matrix {
             let h = {
                 nodeName: heading.nodeName,
                 innerText: heading.innerText,
+                id: heading.id,
             }
             this.toc.push(h)
         })

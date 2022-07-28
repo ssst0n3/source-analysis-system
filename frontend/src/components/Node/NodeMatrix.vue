@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button class="download-btn" @click="downloadDataSource">
+    <b-button class="download-btn" @click="downloadDataSource" v-if="!staticView">
       <b-icon icon="download"/>
     </b-button>
     <TableOfContent :toc="toc"/>
@@ -23,9 +23,9 @@
         <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
                    triggers="hover">
           <div>
-            <b-btn @click="next(node.ID)" v-if="node.next===0">Next</b-btn>
+            <b-btn @click="next(node.ID)" v-if="node.next===0 && !staticView">Next</b-btn>
             <b-btn variant="light" v-else><a :href="'#card-'+node.next">Next</a></b-btn>
-            <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0">Call</b-btn>
+            <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0 && !staticView">Call</b-btn>
             <b-btn variant="light" class="ml-2" v-else><a :href="'#card-'+node.child">Call</a></b-btn>
           </div>
         </b-tooltip>
@@ -63,7 +63,7 @@ export default {
   components: {TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
     root: Number,
-    static: Boolean,
+    staticView: Boolean,
     dataSource: String,
   },
   data() {
@@ -125,7 +125,7 @@ export default {
       fileLink.click();
     },
     async refreshData() {
-      if (this.static) {
+      if (this.staticView) {
         let dataSource =  await lightweightRestful.api.get(this.dataSource, null, {
           caller: this,
           success_msg: 'list node matrix successfully'

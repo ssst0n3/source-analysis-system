@@ -20,7 +20,7 @@ export default new Router({
             component: DynamicView,
         },
         {
-            path: '/static/:data_source',
+            path: '/static/:source/:data_source',
             name: 'StaticView',
             component: StaticView,
         }
