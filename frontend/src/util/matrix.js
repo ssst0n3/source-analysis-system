@@ -126,7 +126,11 @@ class Matrix {
         let node = this.nodes[nodeId]
         let headings = parseHeading(node.markdown)
         headings.forEach(heading => {
-            this.toc.push(heading)
+            let h = {
+                nodeName: heading.nodeName,
+                innerText: heading.innerText,
+            }
+            this.toc.push(h)
         })
         let nodeRelation = this.nodeRelations[nodeId]
         if (nodeRelation.child > 0) {

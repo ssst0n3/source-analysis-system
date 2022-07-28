@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import NodeMatrix from "@/components/Node/NodeMatrix";
-import IndexView from "@/components/IndexView";
+import IndexView from "@/components/View/IndexView";
+import StaticView from "@/components/View/StaticView";
+import DynamicView from "@/components/View/DynamicView";
 
 
 Vue.use(Router)
@@ -16,7 +17,12 @@ export default new Router({
         {
             path: '/node/:id',
             name: 'NodeMatrix',
-            component: NodeMatrix,
+            component: DynamicView,
+        },
+        {
+            path: '/static/:data_source',
+            name: 'StaticView',
+            component: StaticView,
         }
     ]
 })

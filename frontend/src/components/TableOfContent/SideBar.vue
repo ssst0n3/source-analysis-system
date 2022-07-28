@@ -7,7 +7,7 @@
       <div class="px-3 py-2">
         <ul>
           <li :class="'toc-'+h.nodeName.toLowerCase()" v-for="(h, index) in toc" :key="`header-${index}`">
-            <a :href="'#'+h.id">{{h.innerText}}</a>
+            <a :href="'#'+h.id">{{ h.innerText }}</a>
           </li>
         </ul>
       </div>
@@ -17,28 +17,10 @@
 
 <script>
 export default {
-  name: "TableOfContent",
+  name: "SideBar",
   props: {
     toc: Array,
   },
-  data() {
-    return {
-      headings: [
-        {
-          nodeName: "h1",
-          innerText: "heading"
-        }
-      ]
-    }
-  },
-  mounted() {
-    // this.$nextTick(() => {
-    //   this.find_headings()
-    // })
-  },
-  methods: {
-
-  }
 }
 </script>
 
