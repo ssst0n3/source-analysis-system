@@ -3,11 +3,11 @@
     <b-button class="toc-btn" v-b-toggle.sidebar-toc>
       <b-icon icon="justify"/>
     </b-button>
-    <b-sidebar id="sidebar-toc" title="Toc" right shadow>
+    <b-sidebar id="sidebar-toc" title="Toc" right visible shadow>
       <div class="px-3 py-2">
         <ul>
           <li :class="'toc-'+h.nodeName.toLowerCase()" v-for="(h, index) in toc" :key="`header-${index}`">
-            <a :href="'#'+h.id">{{ h.innerText }}</a>
+            <a @click.prevent="anchor(h.id)" :href="'#'+h.id">{{ h.innerText }}</a>
           </li>
         </ul>
       </div>
@@ -16,11 +16,16 @@
 </template>
 
 <script>
+import {anchor} from "@/util/util";
+
 export default {
   name: "SideBar",
   props: {
     toc: Array,
   },
+  methods: {
+    anchor: anchor
+  }
 }
 </script>
 

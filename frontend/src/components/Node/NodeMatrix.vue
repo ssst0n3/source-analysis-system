@@ -23,10 +23,14 @@
         <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
                    triggers="hover">
           <div>
-            <b-btn @click="next(node.ID)" v-if="node.next===0 && !staticView">Next</b-btn>
-            <b-btn variant="light" v-else><a :href="'#card-'+node.next">Next</a></b-btn>
-            <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0 && !staticView">Call</b-btn>
-            <b-btn variant="light" class="ml-2" v-else><a :href="'#card-'+node.child">Call</a></b-btn>
+            <b-btn variant="light" v-if="node.next !== 0">
+              <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>
+            </b-btn>
+            <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>
+            <b-btn variant="light" class="ml-2" v-if="node.child !==0">
+              <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>
+            </b-btn>
+            <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>
           </div>
         </b-tooltip>
         <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
@@ -36,7 +40,7 @@
         <AnalysisItem v-else/>
       </div>
     </div>
-    <b-modal id="node-common" hide-footer size="xl">
+    <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
       <MarkdownEditor ref="markdown_editor_common" markdown=""/>
       <div id="panel" class="float-right">
         <b-btn @click="save">save</b-btn>
@@ -57,6 +61,7 @@ import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
+import {anchor} from "@/util/util";
 
 export default {
   name: "NodeMatrix",
@@ -111,6 +116,7 @@ export default {
     }
   },
   methods: {
+    anchor: anchor,
     downloadDataSource() {
       let data = {
         "matrix": this.nodeMatrix,
@@ -126,7 +132,7 @@ export default {
     },
     async refreshData() {
       if (this.staticView) {
-        let dataSource =  await lightweightRestful.api.get(this.dataSource, null, {
+        let dataSource = await lightweightRestful.api.get(this.dataSource, null, {
           caller: this,
           success_msg: 'list node matrix successfully'
         })
