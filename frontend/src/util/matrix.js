@@ -109,6 +109,10 @@ class Matrix {
                     let nodeRelation = this.nodeRelations[id]
                     node.child = nodeRelation.child
                     node.next = nodeRelation.next
+                    if (node.child > 0) {
+                        let child = this.nodes[node.child]
+                        child.parent = id
+                    }
                 } else {
                     node = {ID: 0, markdown: ''}
                 }

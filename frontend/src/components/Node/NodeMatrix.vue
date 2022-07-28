@@ -31,6 +31,9 @@
               <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>
             </b-btn>
             <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>
+            <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
+              <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
+            </b-btn>
           </div>
         </b-tooltip>
         <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
@@ -313,7 +316,9 @@ export default {
 /*}*/
 
 
-/*/deep/ .tooltip-inner {*/
-/*  background-color: rgba(0,0,0,0);*/
-/*}*/
+/deep/ .tooltip-inner {
+  max-width: unset;
+  /*background-color: rgba(0,0,0,0);*/
+}
+
 </style>
