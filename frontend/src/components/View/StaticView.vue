@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NodeMatrix static :data-source="`/${dataSource}`"/>
+    <NodeMatrix static-view :data-source="`/${source}/${dataSource}`"/>
   </div>
 </template>
 
@@ -14,11 +14,12 @@ export default {
   data() {
     return {
       dataSource: this.$route.params.data_source,
+      source: this.$route.params.source,
     }
   },
   created() {
     lightweightRestful.api.initClient('/')
-  }
+  },
 }
 </script>
 
