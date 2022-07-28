@@ -1,5 +1,8 @@
 <template>
   <div>
+    <b-button class="download-btn" @click="downloadDataSource">
+      <b-icon icon="download"/>
+    </b-button>
     <TableOfContent :toc="toc"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
@@ -17,15 +20,17 @@
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light" triggers="hover">
+        <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
+                   triggers="hover">
           <div>
             <b-btn @click="next(node.ID)" v-if="node.next===0">Next</b-btn>
             <b-btn variant="light" v-else><a :href="'#card-'+node.next">Next</a></b-btn>
             <b-btn @click="call(node.ID)" class="ml-2" v-if="node.child===0">Call</b-btn>
-            <b-btn variant="light" v-else><a :href="'#card-'+node.child">Call</a></b-btn>
+            <b-btn variant="light" class="ml-2" v-else><a :href="'#card-'+node.child">Call</a></b-btn>
           </div>
         </b-tooltip>
-        <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID" :markdown="node.markdown.toString()"
+        <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
+                      :markdown="node.markdown.toString()"
                       v-on:update_node="refreshWorld"
                       v-if="node.markdown.length>0"/>
         <AnalysisItem v-else/>
@@ -51,18 +56,21 @@ import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
-import TableOfContent from "@/components/TableOfContent";
+import TableOfContent from "@/components/TableOfContent/TableOfContent";
 
 export default {
   name: "NodeMatrix",
   components: {TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+  props: {
+    root: Number,
+    static: Boolean,
+    dataSource: String,
+  },
   data() {
     return {
-      root: parseInt(this.$route.params.id),
       nodesMap: {},
-      nodeMatrix: [],
-      nodeRelations: [],
       nodeRelationsMap: {},
+      nodeMatrix: [],
       mode: 0,
       baseNode: 0,
       plumbInstance: null,
@@ -82,6 +90,10 @@ export default {
 
   mounted() {
     this.plumbInstance = jsPlumb.getInstance()
+    this.plumbInstance.bind('click', function (conn) {
+      // console.log(conn, event)
+      window.scrollTo(conn.target.offsetLeft - 100, conn.target.offsetTop - 100)
+    })
     // this.$nextTick(() => {
     //   console.log(document.getElementsByTagName('h1'))
     // })
@@ -99,7 +111,29 @@ export default {
     }
   },
   methods: {
+    downloadDataSource() {
+      let data = {
+        "matrix": this.nodeMatrix,
+        "toc": this.toc,
+      }
+      let marshaled = JSON.stringify(data)
+      const urlBlob = window.URL.createObjectURL(new Blob([marshaled]))
+      let fileLink = document.createElement('a');
+      fileLink.href = urlBlob;
+      fileLink.setAttribute('download', 'data-source.json');
+      document.body.appendChild(fileLink);
+      fileLink.click();
+    },
     async refreshData() {
+      if (this.static) {
+        let dataSource =  await lightweightRestful.api.get(this.dataSource, null, {
+          caller: this,
+          success_msg: 'list node matrix successfully'
+        })
+        this.nodeMatrix = dataSource["matrix"]
+        this.toc = dataSource["toc"]
+        return
+      }
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
       let matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
@@ -162,57 +196,67 @@ export default {
       let that = this
       // let plumbInstance = jsPlumb.getInstance()
       that.plumbInstance.ready(function () {
-        that.nodeRelations.forEach(nodeRelation => function () {
-          if (nodeRelation.child !== 0) {
-            that.plumbInstance.connect({
-              source: 'node-' + nodeRelation.node,
-              target: 'node-' + nodeRelation.child,
-              anchor: ['Right', 'Left'],
-              endpoint: 'Blank',
-              // connector: ['Flowchart'],
-              connector: ['Straight'],
-              overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
-              paintStyle: {stroke: '#909393', strokeWidth: 2}
-            })
+        for (let x = 0; x < that.nodeMatrix.length; x++) {
+          for (let y = 0; y < that.nodeMatrix[x].length; y++) {
+            let node = that.nodeMatrix[x][y]
+            if (node.ID === 0) {
+              continue
+            }
+            if (node.child !== 0) {
+              that.plumbInstance.connect({
+                source: 'node-' + node.ID,
+                target: 'node-' + node.child,
+                anchor: ['Right', 'Left'],
+                endpoint: 'Blank',
+                // connector: ['Flowchart'],
+                connector: ['Straight'],
+                overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
+                paintStyle: {stroke: '#909393', strokeWidth: 2},
+                // hoverPaintStyle: {
+                //   outlineStroke: 'lightblue'
+                // },
+              })
+            }
+            if (node.next !== 0) {
+              that.plumbInstance.connect({
+                source: 'node-' + node.ID,
+                target: 'node-' + node.next,
+                anchor: ['Bottom', 'Top'],
+                endpoint: 'Blank',
+                // connector: ['Flowchart'],
+                connector: ['Straight'],
+                overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
+                paintStyle: {stroke: '#909393', strokeWidth: 2},
+              })
+            }
           }
-          if (nodeRelation.next !== 0) {
-            that.plumbInstance.connect({
-              source: 'node-' + nodeRelation.node,
-              target: 'node-' + nodeRelation.next,
-              anchor: ['Bottom', 'Top'],
-              endpoint: 'Blank',
-              // connector: ['Flowchart'],
-              connector: ['Straight'],
-              overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
-              paintStyle: {stroke: '#909393', strokeWidth: 2}
-            })
-          }
-        }())
+        }
       })
     },
     async listNodes(id) {
       this.nodeLoading = true
       let nodes = await lightweightRestful.api.get(consts.api.v1.node.list(id), null, {
         caller: this,
-        success_msg: 'list node matrix successfully'
+        success_msg: 'list node successfully'
       })
       nodes.forEach(node => {
-        this.nodesMap[node.ID]=node
+        this.nodesMap[node.ID] = node
       })
       this.nodeLoading = false
     },
     async listNodeRelationsByRoot(id) {
       this.nodeRelationsLoading = true
-      this.nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
+      let nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
         caller: this,
         success_msg: 'list node_relation successfully'
       })
-      this.nodeRelations.forEach(nodeRelation => {
-        this.nodeRelationsMap[nodeRelation.node]=nodeRelation
+      nodeRelations.forEach(nodeRelation => {
+        this.nodeRelationsMap[nodeRelation.node] = nodeRelation
       })
       this.nodeRelationsLoading = false
     },
-  },
+  }
+  ,
 }
 </script>
 
@@ -221,24 +265,24 @@ export default {
   visibility: hidden;
 }
 
-.node-anchor {
-  display: flex;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  cursor: crosshair;
-  z-index: 9999;
-  background: -webkit-radial-gradient(sandybrown 10%, white 30%, #9a54ff 60%);
-}
+/*.node-anchor {*/
+/*  display: flex;*/
+/*  position: absolute;*/
+/*  width: 20px;*/
+/*  height: 20px;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  border-radius: 10px;*/
+/*  cursor: crosshair;*/
+/*  z-index: 9999;*/
+/*  background: -webkit-radial-gradient(sandybrown 10%, white 30%, #9a54ff 60%);*/
+/*}*/
 
-.anchor-top {
-  top: 20px;
-  left: 50%;
-  margin-left: 20px;
-}
+/*.anchor-top {*/
+/*  top: 20px;*/
+/*  left: 50%;*/
+/*  margin-left: 20px;*/
+/*}*/
 
 /deep/ .modal-dialog {
   width: 90%;
@@ -250,6 +294,13 @@ export default {
   height: 100%;
 }
 
+.download-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 100px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+}
 
 /*/deep/ code {*/
 /*  display: none;*/

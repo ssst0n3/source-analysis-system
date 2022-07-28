@@ -14,3 +14,9 @@ services:
   db:
     ports:
       - "16036:3306"
+
+  adminer:
+    image: adminer:4
+    restart: always
+    ports:
+      - "16088:8080"
