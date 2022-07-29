@@ -1,0 +1,50 @@
+# https://github.com/redhat-actions/push-to-registry/blob/main/.github/workflows/ghcr-push.yaml
+# This workflow will perform a test whenever there
+# is some change in code done to ensure that the changes
+# are not buggy and we are getting the desired output.
+name: Push to GHCR
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+env:
+  IMAGE_NAME: source-analysis-system
+  IMAGE_TAGS: v1
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  push-ghcr:
+    name: Build and push image
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checkout push-to-registry action github repository
+      - name: Checkout Push to Registry action
+        uses: actions/checkout@v2
+
+      # Build image using Buildah action
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAGS }}
+          containerfiles: |
+            ./Dockerfile
+      # Podman Login action (https://github.com/redhat-actions/podman-login) also be used to log in,
+      # in which case 'username' and 'password' can be omitted.
+      - name: Push To GHCR
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+
+      - name: Print image url
+        run: echo "Image pushed to ${{ steps.push-to-ghcr.outputs.registry-paths }}"
