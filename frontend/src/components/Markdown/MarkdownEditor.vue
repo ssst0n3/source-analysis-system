@@ -30,7 +30,7 @@ export default {
 #previewer {
   margin: 0;
   width: 100%;
-  height: 90%;
+  height: 80%;
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: #333;
 }

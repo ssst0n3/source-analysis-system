@@ -71,19 +71,21 @@ export default {
       }, {
         caller: this,
       })
-      this.$bvModal.hide('create_root_node_markdown_editor')
+      this.$bvModal.hide('modal-create-root-node')
     }
   }
 }
 </script>
 
 <style scoped>
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-dialog {
   width: 90%;
   max-width: 100%;
   height: 90%;
 }
 
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-content {
   height: 100%;
 }
