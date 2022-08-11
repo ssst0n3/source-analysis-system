@@ -89,6 +89,71 @@ class Matrix {
         }
     }
 
+    shift() {
+        for (let x = 2; x <= this.x - 1; x++) {
+            let start = -1
+            let end = -1
+            for (let y = 0; y <= this.y - 1; y++) {
+                // find continued lines
+                if (this.matrix[x][y] > 0) {
+                    if (start !== -1) {
+                        end = y
+                    } else {
+                        start = y
+                        end = start
+                    }
+                }
+                if (this.matrix[x][y] === 0 || y === this.y-1){
+                    if (start !== -1) {
+                        // shift continued lines
+                        this.shiftLine(x, start, end)
+                    }
+                    start = -1
+                    end = -1
+                }
+            }
+        }
+    }
+
+    shiftLine(x, start, end) {
+        // calculate shift distance
+        let shift = 0
+        for (let y = start; y <= end; y++) {
+            let col = x
+            // find border
+            while (col > 0) {
+                col--
+                if (this.matrix[col][y] !== 0) {
+                    col += 1
+                    break
+                }
+            }
+            if (col === x) {
+                return
+            }
+            if (shift === 0 || shift > x - col) {
+                shift = x - col
+            }
+        }
+        if (shift > 0) {
+            for (let y = start; y <= end; y++) {
+                this.matrix[x - shift][y] = this.matrix[x][y]
+                this.matrix[x][y] = 0
+            }
+        }
+    }
+
+    cleanSuffix() {
+        for (let y = 0; y <= this.y-1; y++) {
+            for (let x = this.x-1; x >=0; x--) {
+                if (this.matrix[x][y] > 0) {
+                    break
+                }
+                this.matrix[x][y] = -1
+            }
+        }
+    }
+
     print() {
         for (let y = 0; y <= this.y - 1; y++) {
             for (let x = 0; x <= this.x - 1; x++) {
@@ -114,7 +179,7 @@ class Matrix {
                         child.parent = id
                     }
                 } else {
-                    node = {ID: 0, markdown: ''}
+                    node = {ID: id, markdown: ''}
                 }
                 nodeCol.push(node)
             }
