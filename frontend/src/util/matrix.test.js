@@ -40,7 +40,11 @@ let MapNodeRelations = {
 
 // eslint-disable-next-line no-undef
 test('next recursive', () => {
-    let matrix = new Matrix.Matrix(1, MapNodeRelations)
+    let matrix = new Matrix.Matrix(1, [], MapNodeRelations)
     matrix.childRecursive(0)
+    matrix.print()
+    matrix.shift()
+    matrix.print()
+    matrix.cleanSuffix()
     matrix.print()
 });

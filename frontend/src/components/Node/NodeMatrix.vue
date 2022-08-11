@@ -20,27 +20,29 @@
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
-                   triggers="hover">
-          <div>
-            <b-btn variant="light" v-if="node.next !== 0">
-              <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>
-            </b-btn>
-            <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>
-            <b-btn variant="light" class="ml-2" v-if="node.child !==0">
-              <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>
-            </b-btn>
-            <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>
-            <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
-              <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
-            </b-btn>
-          </div>
-        </b-tooltip>
-        <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
-                      :markdown="node.markdown.toString()"
-                      v-on:update_node="refreshWorld"
-                      v-if="node.markdown.length>0"/>
-        <AnalysisItem v-else/>
+        <div v-if="node.ID !== -1">
+          <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
+                     triggers="hover">
+            <div>
+              <b-btn variant="light" v-if="node.next !== 0">
+                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>
+              </b-btn>
+              <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>
+              <b-btn variant="light" class="ml-2" v-if="node.child !==0">
+                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>
+              </b-btn>
+              <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>
+              <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
+                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
+              </b-btn>
+            </div>
+          </b-tooltip>
+          <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
+                        :markdown="node.markdown.toString()"
+                        v-on:update_node="refreshWorld"
+                        v-if="node.markdown.length>0"/>
+          <AnalysisItem v-else/>
+        </div>
       </div>
     </div>
     <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
@@ -85,6 +87,7 @@ export default {
       nodeLoading: false,
       nodeRelationsLoading: false,
       toc: [],
+      time_start: 0,
     }
   },
   computed: {
@@ -93,6 +96,7 @@ export default {
     }
   },
   async created() {
+    this.time_start = new Date().getTime()
     await this.refreshData()
   },
 
@@ -143,10 +147,14 @@ export default {
         this.toc = dataSource["toc"]
         return
       }
+      console.log('time before data pulled is', `${new Date().getTime() - this.time_start}ms`)
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
+      console.log('time after data pulled is', `${new Date().getTime() - this.time_start}ms`)
       let matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
       matrix.childRecursive(0)
+      matrix.shift()
+      matrix.cleanSuffix()
       this.nodeMatrix = matrix.dumpNode()
       matrix.generateToc(this.root)
       this.toc = matrix.toc
@@ -208,7 +216,7 @@ export default {
         for (let x = 0; x < that.nodeMatrix.length; x++) {
           for (let y = 0; y < that.nodeMatrix[x].length; y++) {
             let node = that.nodeMatrix[x][y]
-            if (node.ID === 0) {
+            if (node.ID <= 0) {
               continue
             }
             if (node.child !== 0) {
@@ -241,6 +249,7 @@ export default {
           }
         }
       })
+      console.log('time after line drawn cost is', `${new Date().getTime() - this.time_start}ms`)
     },
     async listNodes(id) {
       this.nodeLoading = true
