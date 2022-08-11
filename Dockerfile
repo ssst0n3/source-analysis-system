@@ -20,9 +20,13 @@ npm install
 RUN npm run-script build
 
 FROM alpine
+ENV WAIT_VERSION 2.7.3
+ENV WAIT_RELEASE https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait
+ADD $WAIT_RELEASE /wait
+RUN chmod +x /wait
+
 RUN mkdir -p /app
 COPY --from=backend /backend/source-analysis-system /app/
 COPY --from=frontend /frontend/dist /app/dist
 WORKDIR /app
-CMD ./source-analysis-system
-#CMD ls -lah db/
+CMD /wait && ./source-analysis-system
