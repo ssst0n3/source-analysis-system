@@ -1,7 +1,6 @@
 package node_relation
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/ssst0n3/lightweight_api"
 	"github.com/ssst0n3/lightweight_api/response"
@@ -59,7 +58,7 @@ func UnlinkNodeFromParent(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	err = db.DB.Debug().Model(model.NodeRelation{}).Delete(fmt.Sprintf("%s = ?", model.SchemaNodeRelation.FieldsByName["Child"].DBName), id).Error
+	err = db.UnlinkNodeFromParent(uint(id))
 	if err != nil {
 		lightweight_api.HandleInternalServerError(c, err)
 		return
