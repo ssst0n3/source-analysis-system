@@ -35,6 +35,9 @@
               <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
                 <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
               </b-btn>
+              <b-btn v-if="!staticView">
+                <a @click="unlinkNodeFromParent(node.ID)">Delete</a>
+              </b-btn>
             </div>
           </b-tooltip>
           <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
@@ -123,6 +126,11 @@ export default {
     }
   },
   methods: {
+    async unlinkNodeFromParent(id) {
+      await lightweightRestful.api.post(consts.api.v1.node_relation.unlink(id), null, null, {
+        caller: this,
+      })
+    },
     anchor: anchor,
     downloadDataSource() {
       let data = {
@@ -264,7 +272,7 @@ export default {
     },
     async listNodeRelationsByRoot(id) {
       this.nodeRelationsLoading = true
-      let nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list_by_root(id), null, {
+      let nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.item(id), null, {
         caller: this,
         success_msg: 'list node_relation successfully'
       })

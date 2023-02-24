@@ -19,12 +19,14 @@ export default {
                 node: api.v1.node,
                 list: (id) => `${api.v1.node}/list/${id}`,
                 matrix: (id) => `${api.v1.node}/matrix/${id}`,
-                update_markdown: (id) => `${api.v1.node}/${id}`,
+                // update_markdown: (id) => `${api.v1.node}/${id}`,
+                item: (id) => `${api.v1.node}/${id}`,
             },
             node_relation: {
-                list_by_root: (id) => `${api.v1.node_relation}/${id}`,
                 node_relation: api.v1.node_relation,
+                item: (id) => `${api.v1.node_relation}/${id}`,
                 update_node_relation_by_node: (id) => `${api.v1.node_relation}/node/${id}`,
+                unlink: (id) => `${api.v1.node_relation}/unlink/${id}`,
             }
         }
     }
