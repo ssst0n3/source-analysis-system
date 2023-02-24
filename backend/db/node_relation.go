@@ -8,7 +8,7 @@ import (
 
 func UnlinkNodeFromParent(child uint) (err error) {
 	cond := fmt.Sprintf("%s = ?", model.SchemaNodeRelation.FieldsByName["Child"].DBName)
-	err = DB.Debug().Where(cond, child).Delete(&model.NodeRelation{}).Error
+	err = DB.Debug().Unscoped().Where(cond, child).Delete(&model.NodeRelation{}).Error
 	if err != nil {
 		awesome_error.CheckErr(err)
 		return
