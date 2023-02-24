@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     async save() {
-      await lightweightRestful.api.put(consts.api.v1.node.update_markdown(this.nodeId), null, {
+      await lightweightRestful.api.put(consts.api.v1.node.item(this.nodeId), null, {
         markdown: this.$refs.markdown_editor.edit
       }, {
         caller: this,

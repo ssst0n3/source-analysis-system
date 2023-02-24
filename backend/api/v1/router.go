@@ -12,6 +12,7 @@ func InitRouter(router *gin.Engine) {
 		nodeRelationGroup.GET("/:id", node_relation.ListByRoot)
 		nodeRelationGroup.POST("", node_relation.Resource.CreateResource)
 		nodeRelationGroup.PUT("/node/:id", node_relation.UpdateNodeRelationByNode)
+		nodeRelationGroup.POST("/unlink/:id", node_relation.UnlinkNodeFromParent)
 	}
 	nodeGroup := router.Group(node.Resource.BaseRelativePath)
 	{
@@ -19,5 +20,6 @@ func InitRouter(router *gin.Engine) {
 		nodeGroup.GET("/matrix/:id", node.Matrix)
 		nodeGroup.PUT("/:id", node.UpdateMarkdown)
 		nodeGroup.POST("", node.Resource.CreateResource)
+		nodeGroup.DELETE("/:id", node.Resource.DeleteResource)
 	}
 }
