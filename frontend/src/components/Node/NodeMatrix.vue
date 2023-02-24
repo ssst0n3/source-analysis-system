@@ -35,7 +35,7 @@
               <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
                 <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
               </b-btn>
-              <b-btn v-if="!staticView">
+              <b-btn v-if="!staticView" class="ml-2">
                 <a @click="unlinkNodeFromParent(node.ID)">Delete</a>
               </b-btn>
             </div>
