@@ -16,33 +16,73 @@
     </b-toast>
     <div v-for="(col, index) in nodeMatrix" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
       <div @mouseover="mouseover"
+           @click="focusNode(node.ID)"
            :ref="'node-'+node.ID" :id="'node-'+node.ID" v-for="(node, index2) in col"
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
         <div v-if="node.ID !== -1">
-          <b-tooltip offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
+          <b-tooltip v-if="false" offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
                      triggers="hover">
             <div>
-              <b-btn variant="light" v-if="node.next !== 0">
-                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>
-              </b-btn>
-              <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>
-              <b-btn variant="light" class="ml-2" v-if="node.child !==0">
-                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>
-              </b-btn>
-              <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>
-              <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">
-                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
-              </b-btn>
-              <b-btn v-if="!staticView">
+              <!--              <b-btn variant="light" v-if="node.next !== 0">-->
+              <!--                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>-->
+              <!--              </b-btn>-->
+              <!--              <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>-->
+              <!--              <b-btn variant="light" class="ml-2" v-if="node.child !==0">-->
+              <!--                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>-->
+              <!--              </b-btn>-->
+              <!--              <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>-->
+              <!--              <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">-->
+              <!--                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>-->
+              <!--              </b-btn>-->
+              <b-btn v-if="!staticView" class="ml-2">
                 <a @click="unlinkNodeFromParent(node.ID)">Delete</a>
               </b-btn>
             </div>
           </b-tooltip>
-          <MarkdownCard style="white-space: normal" :nodeId="node.ID.toString()" :id="'card-'+node.ID"
-                        :markdown="node.markdown.toString()"
+          <!--          <b-tooltip boundary="document" placement="bottom" :target="'node-'+node.ID" variant="light"-->
+          <!--                     triggers="hover">-->
+          <!--            <div>-->
+          <!--              <b-btn size="sm" variant="light" v-if="node.next !== 0">-->
+          <!--                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>-->
+          <!--              </b-btn>-->
+          <!--              <b-btn size="sm" @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>-->
+          <!--            </div>-->
+          <!--          </b-tooltip>-->
+          <!--          <b-tooltip boundary="document" placement="righttop" :target="'node-'+node.ID" variant="light"-->
+          <!--                     triggers="hover">-->
+          <!--            <div>-->
+          <!--              <b-btn size="sm" variant="light" class="ml-2" v-if="node.child !== 0">-->
+          <!--                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>-->
+          <!--              </b-btn>-->
+          <!--              <b-btn size="sm" @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>-->
+          <!--            </div>-->
+          <!--          </b-tooltip>-->
+          <b-tooltip v-if="false" boundary="document" placement="lefttop" :target="'node-'+node.ID" variant="light"
+                     triggers="hover">
+            <div>
+              <b-btn size="sm" variant="light" class="ml-2" v-if="node.parent !==undefined">
+                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
+              </b-btn>
+            </div>
+          </b-tooltip>
+          <b-tooltip v-if="false" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
+                     triggers="hover">
+            <div>
+              <b-btn size="sm">
+                INSERT
+              </b-btn>
+            </div>
+          </b-tooltip>
+          <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
+                        :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
+                        :next-id="node.next" :child-id="node.child"
+                        :has-parent="node.parent !== undefined"
+                        :static-view="staticView"
+                        :active="focus===node.ID"
                         v-on:update_node="refreshWorld"
+                        v-on:next="next" v-on:call="call" v-on:insert="insert"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
         </div>
@@ -91,6 +131,7 @@ export default {
       nodeRelationsLoading: false,
       toc: [],
       time_start: 0,
+      focus: 0,
     }
   },
   computed: {
@@ -126,6 +167,9 @@ export default {
     }
   },
   methods: {
+    focusNode(id) {
+      this.focus = id
+    },
     async unlinkNodeFromParent(id) {
       await lightweightRestful.api.post(consts.api.v1.node_relation.unlink(id), null, null, {
         caller: this,
@@ -204,18 +248,31 @@ export default {
       this.$bvModal.hide('node-common')
       await this.refreshWorld()
     },
-    next(id) {
-      this.baseNode = id
-      this.mode = modeNext
-      this.$bvModal.show('node-common')
+    next(id, nextId) {
+      if (nextId !== 0) {
+        anchor('card-' + nextId)
+        this.focus = nextId
+      } else {
+        this.baseNode = id
+        this.mode = modeNext
+        this.$bvModal.show('node-common')
+      }
     },
-    call(id) {
-      this.baseNode = id
-      this.mode = modeCall
-      this.$bvModal.show('node-common')
+    call(id, childId) {
+      if (childId !== 0) {
+        anchor('card-' + childId)
+        this.focus = childId
+      } else {
+        this.baseNode = id
+        this.mode = modeCall
+        this.$bvModal.show('node-common')
+      }
+    },
+    insert(id) {
+      alert("insert" + id)
     },
     mouseover() {
-      console.log("mouseover")
+      // console.log("mouseover")
     },
     drawLine() {
       let that = this
@@ -310,12 +367,14 @@ export default {
 /*  margin-left: 20px;*/
 /*}*/
 
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-dialog {
   width: 90%;
   max-width: 100%;
   height: 90%;
 }
 
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-content {
   height: 100%;
 }
@@ -333,6 +392,7 @@ export default {
 /*}*/
 
 
+/*noinspection CssUnusedSymbol*/
 /deep/ .tooltip-inner {
   max-width: unset;
   /*background-color: rgba(0,0,0,0);*/

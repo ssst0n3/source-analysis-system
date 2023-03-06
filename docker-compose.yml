@@ -13,7 +13,6 @@ services:
     ports:
       - "16080:8080"
     environment:
-      ALLOW_ORIGINS: "http://127.0.0.1:8080"
       WITH_FRONTEND: "true"
       LOCAL_LISTEN_PORT: 8080
       WAIT_HOSTS: db:3306

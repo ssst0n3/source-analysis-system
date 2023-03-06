@@ -1,6 +1,36 @@
 <template>
   <div>
-    <b-card>
+    <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light">
+      <template #header>
+        <div class="text-right">
+          <b-badge pill :variant="active ? hasNext?'secondary':'info' : 'light'" @click="next"
+                   v-if="!staticView || hasNext">
+            <b-link class="text-white">
+              <b-icon-arrow-down></b-icon-arrow-down>
+            </b-link>
+          </b-badge>
+          <b-badge pill :variant="active ? hasChild?'secondary':'info' : 'light'" @click="call">
+            <b-link class="text-white">
+              <b-icon-arrow-right></b-icon-arrow-right>
+            </b-link>
+          </b-badge>
+          <b-badge pill :variant="active ? 'info' : 'light'" @click="insert">
+            <b-link class="text-white">
+              <b-icon-arrow-up></b-icon-arrow-up>
+            </b-link>
+          </b-badge>
+          <b-badge pill :variant="active ? 'info' : 'light'" @click="down">
+            <b-link class="text-white">
+              <b-icon-arrow-left></b-icon-arrow-left>
+            </b-link>
+          </b-badge>
+          <b-badge pill :variant="active ? 'info' : 'light'" @click="down">
+            <b-link class="text-white">
+              <b-icon-x></b-icon-x>
+            </b-link>
+          </b-badge>
+        </div>
+      </template>
       <div style="width: 100%" v-html="markdownToHtml" @dblclick="$bvModal.show('modal-node-'+nodeId)"/>
     </b-card>
     <b-modal :id="'modal-node-'+nodeId" hide-footer size="xl">
@@ -24,9 +54,17 @@ export default {
   props: {
     nodeId: String,
     markdown: String,
+    nextId: Number,
+    childId: Number,
+    hasParent: Boolean,
+    staticView: Boolean,
+    active: Boolean,
   },
   data() {
-    return {};
+    return {
+      hasNext: this.nextId !== 0,
+      hasChild: this.childId !== 0,
+    };
   },
   computed: {
     markdownToHtml() {
@@ -41,20 +79,34 @@ export default {
         caller: this,
         success_msg: 'update successfully'
       })
-      this.$bvModal.hide('modal-node-'+this.nodeId)
+      this.$bvModal.hide('modal-node-' + this.nodeId)
       this.$emit('update_node')
+    },
+    down() {
+      alert(1)
+    },
+    next() {
+      this.$emit('next', this.nodeId, this.nextId)
+    },
+    call() {
+      this.$emit('call', this.nodeId, this.childId)
+    },
+    insert() {
+      this.$emit('insert_node')
     }
   }
 }
 </script>
 
 <style scoped>
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-dialog {
   width: 90%;
   max-width: 100%;
   height: 100%;
 }
 
+/*noinspection CssUnusedSymbol*/
 /deep/ .modal-content {
   height: 100%;
 }
