@@ -22,7 +22,8 @@
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
         <div v-if="node.ID !== -1">
-          <b-tooltip v-if="false" offset="-200" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
+          <b-tooltip v-if="false" offset="-200" boundary="document" placement="top" :target="'node-'+node.ID"
+                     variant="light"
                      triggers="hover">
             <div>
               <!--              <b-btn variant="light" v-if="node.next !== 0">-->
@@ -63,7 +64,7 @@
                      triggers="hover">
             <div>
               <b-btn size="sm" variant="light" class="ml-2" v-if="node.parent !==undefined">
-                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
+                <a @click="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
               </b-btn>
             </div>
           </b-tooltip>
@@ -168,6 +169,7 @@ export default {
   },
   methods: {
     focusNode(id) {
+      alert('focus')
       this.focus = id
     },
     async unlinkNodeFromParent(id) {
@@ -251,6 +253,7 @@ export default {
     next(id, nextId) {
       if (nextId !== 0) {
         anchor('card-' + nextId)
+        alert('next')
         this.focus = nextId
       } else {
         this.baseNode = id
