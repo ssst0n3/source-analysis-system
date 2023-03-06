@@ -3,28 +3,28 @@
     <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light">
       <template #header>
         <div class="text-right">
-          <b-badge pill :variant="active ? hasNext?'secondary':'info' : 'light'" @click="next"
+          <b-badge pill :variant="active ? hasNext?'secondary':'info' : 'light'" @click.stop="next"
                    v-if="!staticView || hasNext">
             <b-link class="text-white">
               <b-icon-arrow-down></b-icon-arrow-down>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? hasChild?'secondary':'info' : 'light'" @click="call">
+          <b-badge pill :variant="active ? hasChild?'secondary':'info' : 'light'" @click.stop="call">
             <b-link class="text-white">
               <b-icon-arrow-right></b-icon-arrow-right>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click="insert">
+          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="insert">
             <b-link class="text-white">
               <b-icon-arrow-up></b-icon-arrow-up>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click="down">
+          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="down">
             <b-link class="text-white">
               <b-icon-arrow-left></b-icon-arrow-left>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click="down">
+          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="down">
             <b-link class="text-white">
               <b-icon-x></b-icon-x>
             </b-link>
