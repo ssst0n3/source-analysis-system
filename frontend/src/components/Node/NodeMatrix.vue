@@ -169,7 +169,6 @@ export default {
   },
   methods: {
     focusNode(id) {
-      alert('focus')
       this.focus = id
     },
     async unlinkNodeFromParent(id) {
@@ -253,7 +252,6 @@ export default {
     next(id, nextId) {
       if (nextId !== 0) {
         anchor('card-' + nextId)
-        alert('next')
         this.focus = nextId
       } else {
         this.baseNode = id
