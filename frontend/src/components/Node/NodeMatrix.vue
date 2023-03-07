@@ -78,7 +78,7 @@
           </b-tooltip>
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
-                        :next-id="node.next" :child-id="node.child"
+                        :next-id="node.next" :child-id="node.child" :last-id="node.last"
                         :has-parent="node.parent !== undefined"
                         :static-view="staticView"
                         :active="focus===node.ID"
@@ -103,6 +103,8 @@ import Matrix from "@/util/matrix";
 
 const modeNext = 1
 const modeCall = 2
+const modeInsert = 3
+
 import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
 import lightweightRestful from "vue-lightweight_restful";
@@ -231,6 +233,49 @@ export default {
         caller: this,
       })
       let id = response.id
+      await this.update_node_relation(id)
+      this.$bvModal.hide('node-common')
+      await this.refreshWorld()
+    },
+    async update_node_relation(id) {
+      switch (this.mode) {
+        case modeCall:
+        case modeNext:
+          await this.update_node_relation_for_next_and_call(id)
+          break
+        case modeInsert:
+          await this.update_node_relation_for_insert(id)
+          break
+      }
+    },
+    async update_node_relation_for_insert(id) {
+      await lightweightRestful.api.post(consts.api.v1.node_relation.node_relation, null, {
+        root: this.root,
+        node: id,
+        next: this.baseNode
+      }, {
+        caller: this,
+      })
+
+      let baseNode = this.nodesMap[this.baseNode]
+      let parent = baseNode.parent
+      let last = baseNode.last
+      if (parent !== undefined) {
+        await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(parent), null, {
+          child: id,
+        }, {
+          caller: this,
+        })
+      }
+      if (last !== undefined) {
+        await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(last), null, {
+          next: id,
+        }, {
+          caller: this,
+        })
+      }
+    },
+    async update_node_relation_for_next_and_call(id) {
       let data = {}
       if (this.mode === modeCall) {
         data.child = id
@@ -246,15 +291,13 @@ export default {
       await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(this.baseNode), null, data, {
         caller: this,
       })
-      this.$bvModal.hide('node-common')
-      await this.refreshWorld()
     },
     next(id, nextId) {
       if (nextId !== 0) {
         anchor('card-' + nextId)
         this.focus = nextId
       } else {
-        this.baseNode = id
+        this.baseNode = parseInt(id)
         this.mode = modeNext
         this.$bvModal.show('node-common')
       }
@@ -264,13 +307,20 @@ export default {
         anchor('card-' + childId)
         this.focus = childId
       } else {
-        this.baseNode = id
+        this.baseNode = parseInt(id)
         this.mode = modeCall
         this.$bvModal.show('node-common')
       }
     },
-    insert(id) {
-      alert("insert" + id)
+    insert(id, lastId) {
+      if (lastId !== undefined) {
+        anchor('card-' + lastId)
+        this.focus = lastId
+      } else {
+        this.baseNode = parseInt(id)
+        this.mode = modeInsert
+        this.$bvModal.show('node-common')
+      }
     },
     mouseover() {
       // console.log("mouseover")

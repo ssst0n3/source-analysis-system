@@ -178,6 +178,10 @@ class Matrix {
                         let child = this.nodes[node.child]
                         child.parent = id
                     }
+                    if (node.next > 0) {
+                        let next = this.nodes[node.next]
+                        next.last = id
+                    }
                 } else {
                     node = {ID: id, markdown: ''}
                 }
