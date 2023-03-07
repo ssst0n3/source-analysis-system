@@ -14,7 +14,7 @@
               <b-icon-arrow-right></b-icon-arrow-right>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="insert">
+          <b-badge pill :variant="active ? hasLast ? 'secondary' : 'info' : 'light'" @click.stop="insert">
             <b-link class="text-white">
               <b-icon-arrow-up></b-icon-arrow-up>
             </b-link>
@@ -56,6 +56,7 @@ export default {
     markdown: String,
     nextId: Number,
     childId: Number,
+    lastId: Number,
     hasParent: Boolean,
     staticView: Boolean,
     active: Boolean,
@@ -64,6 +65,7 @@ export default {
     return {
       hasNext: this.nextId !== 0,
       hasChild: this.childId !== 0,
+      hasLast: this.lastId !== undefined,
     };
   },
   computed: {
@@ -92,7 +94,7 @@ export default {
       this.$emit('call', this.nodeId, this.childId)
     },
     insert() {
-      this.$emit('insert_node')
+      this.$emit('insert', this.nodeId, this.lastId)
     }
   }
 }
