@@ -95,7 +95,10 @@ export default {
     },
     insert() {
       this.$emit('insert', this.nodeId, this.lastId)
-    }
+    },
+    delete() {
+      this.$emit('delete', this.nodeId)
+    },
   }
 }
 </script>

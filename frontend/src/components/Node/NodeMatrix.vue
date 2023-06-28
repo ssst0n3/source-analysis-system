@@ -83,7 +83,7 @@
                         :static-view="staticView"
                         :active="focus===node.ID"
                         v-on:update_node="refreshWorld"
-                        v-on:next="next" v-on:call="call" v-on:insert="insert"
+                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:delete="delete"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
         </div>
@@ -321,6 +321,9 @@ export default {
         this.mode = modeInsert
         this.$bvModal.show('node-common')
       }
+    },
+    delete(id) {
+        this.unlinkNodeFromParent(id)
     },
     mouseover() {
       // console.log("mouseover")
