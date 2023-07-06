@@ -24,7 +24,7 @@
               <b-icon-arrow-left></b-icon-arrow-left>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="down">
+          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="remove">
             <b-link class="text-white">
               <b-icon-x></b-icon-x>
             </b-link>
@@ -96,8 +96,8 @@ export default {
     insert() {
       this.$emit('insert', this.nodeId, this.lastId)
     },
-    delete() {
-      this.$emit('delete', this.nodeId)
+    remove() {
+      this.$emit('remove', this.nodeId)
     },
   }
 }
