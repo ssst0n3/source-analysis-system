@@ -1,7 +1,7 @@
 version: '3'
 services:
   source-analysis-system:
-#    build: .
+    build: .
     environment:
     - "ALLOW_ORIGINS=http://127.0.0.1:8080"
     - "DEBUG=true"
