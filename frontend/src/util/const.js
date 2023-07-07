@@ -26,7 +26,8 @@ export default {
                 node_relation: api.v1.node_relation,
                 item: (id) => `${api.v1.node_relation}/${id}`,
                 update_node_relation_by_node: (id) => `${api.v1.node_relation}/node/${id}`,
-                unlink: (id) => `${api.v1.node_relation}/unlink/${id}`,
+                // unlink: (id) => `${api.v1.node_relation}/unlink/${id}`,
+                hide_node: (id) => `${api.v1.node_relation}/hide/${id}`,
             }
         }
     }

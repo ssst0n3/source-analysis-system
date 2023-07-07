@@ -65,3 +65,16 @@ func UnlinkNodeFromParent(c *gin.Context) {
 	}
 	response.DeleteSuccess200(c)
 }
+
+func HideNodeFromParent(c *gin.Context) {
+	id, err := node.ParseId(c)
+	if err != nil {
+		return
+	}
+	err = db.HideNode(uint(id))
+	if err != nil {
+		lightweight_api.HandleInternalServerError(c, err)
+		return
+	}
+	response.DeleteSuccess200(c)
+}

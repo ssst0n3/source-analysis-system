@@ -173,10 +173,17 @@ export default {
     focusNode(id) {
       this.focus = id
     },
-    async unlinkNodeFromParent(id) {
-      await lightweightRestful.api.post(consts.api.v1.node_relation.unlink(id), null, null, {
+    // async unlinkNodeFromParent(id) {
+    //   await lightweightRestful.api.post(consts.api.v1.node_relation.unlink(id), null, null, {
+    //     caller: this,
+    //   })
+    // },
+    async hideNode(id) {
+      await lightweightRestful.api.delete(consts.api.v1.node_relation.hide_node(id), null, {
         caller: this,
+        success_msg: 'delete node successfully'
       })
+      await this.refreshData()
     },
     anchor: anchor,
     downloadDataSource() {
@@ -323,7 +330,9 @@ export default {
       }
     },
     remove(id) {
-        this.unlinkNodeFromParent(id)
+      if (confirm(`are you sure to delete #${id}? all of it's children will be deleted`)) {
+        this.hideNode(id)
+      }
     },
     mouseover() {
       // console.log("mouseover")

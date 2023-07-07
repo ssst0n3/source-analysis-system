@@ -3,6 +3,7 @@ module github.com/ssst0n3/source-analysis-system
 go 1.17
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.6.3
