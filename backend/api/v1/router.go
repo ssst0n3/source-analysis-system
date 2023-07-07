@@ -12,7 +12,8 @@ func InitRouter(router *gin.Engine) {
 		nodeRelationGroup.GET("/:id", node_relation.ListByRoot)
 		nodeRelationGroup.POST("", node_relation.Resource.CreateResource)
 		nodeRelationGroup.PUT("/node/:id", node_relation.UpdateNodeRelationByNode)
-		nodeRelationGroup.POST("/unlink/:id", node_relation.UnlinkNodeFromParent)
+		//nodeRelationGroup.POST("/unlink/:id", node_relation.UnlinkNodeFromParent)
+		nodeRelationGroup.DELETE("/hide/:id", node_relation.HideNodeFromParent)
 	}
 	nodeGroup := router.Group(node.Resource.BaseRelativePath)
 	{
