@@ -4,7 +4,7 @@
       <b-icon icon="plus"/>
     </b-btn>
     <div v-for="node in nodes" :key="node.id">
-      <router-link :to="`/node/${node.ID}`">{{ node.markdown }}</router-link>
+      <router-link :to="`/node/${node.ID}`">{{ node.title }}</router-link>
     </div>
     <b-modal id="modal-create-root-node" hide-footer size="xl">
       <b-form-group
