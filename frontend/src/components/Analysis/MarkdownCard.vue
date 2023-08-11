@@ -19,7 +19,7 @@
               <b-icon-arrow-up></b-icon-arrow-up>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="down">
+          <b-badge pill :variant="active ? hasParent ? 'secondary' : 'info' : 'light'" @click.stop="caller">
             <b-link class="text-white">
               <b-icon-arrow-left></b-icon-arrow-left>
             </b-link>
@@ -57,6 +57,7 @@ export default {
     nextId: Number,
     childId: Number,
     lastId: Number,
+    parentId: Number,
     hasParent: Boolean,
     staticView: Boolean,
     active: Boolean,
@@ -95,6 +96,9 @@ export default {
     },
     insert() {
       this.$emit('insert', this.nodeId, this.lastId)
+    },
+    caller() {
+      this.$emit('caller', this.nodeId, this.parentId)
     },
     remove() {
       this.$emit('remove', this.nodeId)

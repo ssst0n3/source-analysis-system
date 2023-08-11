@@ -78,12 +78,12 @@
           </b-tooltip>
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
-                        :next-id="node.next" :child-id="node.child" :last-id="node.last"
+                        :next-id="node.next" :child-id="node.child" :last-id="node.last" :parent-id="node.parent"
                         :has-parent="node.parent !== undefined"
                         :static-view="staticView"
                         :active="focus===node.ID"
                         v-on:update_node="refreshWorld"
-                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:remove="remove"
+                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:remove="remove" v-on:caller="caller"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
         </div>
@@ -103,7 +103,8 @@ import Matrix from "@/util/matrix";
 
 const modeNext = 1
 const modeCall = 2
-const modeInsert = 3
+const modeInsertLast = 3
+const modeInsertCaller = 4
 
 import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
@@ -250,7 +251,7 @@ export default {
         case modeNext:
           await this.update_node_relation_for_next_and_call(id)
           break
-        case modeInsert:
+        case modeInsertLast:
           await this.update_node_relation_for_insert(id)
           break
       }
@@ -325,7 +326,18 @@ export default {
         this.focus = lastId
       } else {
         this.baseNode = parseInt(id)
-        this.mode = modeInsert
+        this.mode = modeInsertLast
+        this.$bvModal.show('node-common')
+      }
+    },
+    caller(id, parentId) {
+      console.log("caller: ", id, parentId)
+      if (parentId !== undefined) {
+        anchor('card-' + parentId)
+        this.focus = parentId
+      } else {
+        this.baseNode = parseInt(id)
+        this.mode = modeInsertCaller
         this.$bvModal.show('node-common')
       }
     },
