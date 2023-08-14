@@ -6,6 +6,7 @@
 
 <script>
 import RootNodes from "@/components/Node/RootNodes";
+
 export default {
   name: "IndexView",
   components: {RootNodes},

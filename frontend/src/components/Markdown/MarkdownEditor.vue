@@ -1,26 +1,46 @@
 <template>
   <div id="previewer">
     <b-form-textarea v-model="edit" debounce="300"/>
-    <div id="preview" v-html="compiledMarkdown"/>
+<!--    <div id="preview" v-html="compiledMarkdown"/>-->
+    <MarkdownViewer id="preview" :markdown="markdown"/>
   </div>
 </template>
 
 <script>
-import {marked} from 'marked'
+import {Marked} from "marked";
+import {markedHighlight} from "marked-highlight";
+import hljs from 'highlight.js';
+import MarkdownViewer from "@/components/Markdown/MarkdownView.vue";
+
+const marked = new Marked(
+    markedHighlight({
+      langPrefix: 'hljs language-',
+      highlight(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, {language}).value;
+      }
+    })
+)
 
 export default {
   name: "MarkdownEditor",
+  components: {MarkdownViewer},
   props: {
     markdown: String,
   },
   data() {
     return {
-      edit: this.markdown
+      edit: this.markdown,
     }
+  },
+  mounted() {
+
   },
   computed: {
     compiledMarkdown() {
-      return marked(this.edit, {sanitize: true});
+      let m = marked.parse(this.edit);
+      console.log(m)
+      return m
     }
   }
 }
@@ -34,7 +54,7 @@ export default {
   display: inline-block;
   overflow-wrap: break-word;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  color: #333;
+  //color: #333;
 }
 
 textarea,
@@ -60,7 +80,7 @@ textarea {
 }
 
 code {
-  color: #f66;
+  //color: #f66;
 }
 
 </style>

@@ -7,6 +7,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
+// import hljs from "highlight.js";
+import highlightPlugin from "@highlightjs/vue-plugin";
+import 'highlight.js/styles/github.css'
+import 'highlight.js/lib/common';
+Vue.use(highlightPlugin);
+
 import consts from "@/util/const";
 import lightweightRestful from "vue-lightweight_restful";
 lightweightRestful.api.initClient(consts.BaseUrl)

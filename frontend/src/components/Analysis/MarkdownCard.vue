@@ -1,6 +1,7 @@
 <template>
   <div>
-    <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light">
+    <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light"
+            @dblclick="$bvModal.show('modal-node-'+nodeId)">
       <template #header>
         <div class="text-right">
           <b-badge pill :variant="active ? hasNext?'secondary':'info' : 'light'" @click.stop="next"
@@ -31,7 +32,7 @@
           </b-badge>
         </div>
       </template>
-      <div style="width: 100%" v-html="markdownToHtml" @dblclick="$bvModal.show('modal-node-'+nodeId)"/>
+      <MarkdownViewer :markdown="markdown" style="width: 100%"/>
     </b-card>
     <b-modal :id="'modal-node-'+nodeId" hide-footer size="xl">
       <MarkdownEditor ref="markdown_editor" :markdown="markdown"/>
@@ -43,14 +44,14 @@
 </template>
 
 <script>
-import {marked} from 'marked';
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import lightweightRestful from "vue-lightweight_restful";
 import consts from "@/util/const";
+import MarkdownViewer from "@/components/Markdown/MarkdownView.vue";
 
 export default {
   name: "MarkdownCard",
-  components: {MarkdownEditor},
+  components: {MarkdownViewer, MarkdownEditor},
   props: {
     nodeId: String,
     markdown: String,
@@ -68,11 +69,6 @@ export default {
       hasChild: this.childId !== 0,
       hasLast: this.lastId !== undefined,
     };
-  },
-  computed: {
-    markdownToHtml() {
-      return marked(this.markdown);
-    }
   },
   methods: {
     async save() {
