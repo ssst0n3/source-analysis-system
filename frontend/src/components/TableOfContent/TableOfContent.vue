@@ -14,7 +14,7 @@ export default {
   // eslint-disable-next-line vue/no-unused-components
   components: {SideBarStatic, SideBar},
   props: {
-    toc: Array,
+    toc: Object,
   },
   data() {
     return {

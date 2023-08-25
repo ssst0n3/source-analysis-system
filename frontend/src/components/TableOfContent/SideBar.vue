@@ -5,8 +5,12 @@
     </b-button>
     <b-sidebar id="sidebar-toc" title="Toc" right visible shadow>
       <div class="px-3 py-2">
+        <a @click.prevent="anchor(toc.title.id)" :href="'#'+toc.title.id" v-if="toc.title !== null">
+          <strong>{{ toc.title.innerText }}</strong>
+        </a>
+        <hr>
         <ul>
-          <li :class="'toc-'+h.nodeName.toLowerCase()" v-for="(h, index) in toc" :key="`header-${index}`">
+          <li :class="'toc-'+h.nodeName.toLowerCase()" v-for="(h, index) in toc.headings" :key="`header-${index}`">
             <a @click.prevent="anchor(h.id)" :href="'#'+h.id">{{ h.innerText }}</a>
           </li>
         </ul>
@@ -21,7 +25,7 @@ import {anchor} from "@/util/util";
 export default {
   name: "SideBar",
   props: {
-    toc: Array,
+    toc: Object,
   },
   methods: {
     anchor: anchor

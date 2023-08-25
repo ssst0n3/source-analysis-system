@@ -133,7 +133,10 @@ export default {
       plumbInstance: null,
       nodeLoading: false,
       nodeRelationsLoading: false,
-      toc: [],
+      toc: {
+        headings: [],
+        title: null,
+      },
       time_start: 0,
       focus: 0,
     }

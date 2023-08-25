@@ -10,12 +10,17 @@ function find_headings(doc) {
         h5: 1,
         h6: 1
     }
+    let title = null
 
     function walk(root) {
         if (root.nodeType === 1 && root.nodeName !== 'script') {
             if (Object.prototype.hasOwnProperty.call(tag_names, root.nodeName.toLowerCase())) {
                 if (root.getAttribute("class") === null) {
-                    headings.push(root);
+                    if (title === null && root.nodeName.toLowerCase() === "h1") {
+                        title = root
+                    } else {
+                        headings.push(root);
+                    }
                 }
             } else {
                 for (let i = 0; i < root.childNodes.length; i++) {
@@ -26,7 +31,10 @@ function find_headings(doc) {
     }
 
     walk(doc);
-    return headings
+    return {
+        title: title,
+        headings: headings,
+    }
 }
 
 
@@ -41,7 +49,10 @@ class Matrix {
     constructor(root, nodes, nodeRelations) {
         this.x = 1
         this.y = 1
-        this.toc = []
+        this.toc = {
+            headings: [],
+            title: null
+        }
         this.matrix = [[root]]
         this.nodes = nodes
         this.nodeRelations = nodeRelations
@@ -103,7 +114,7 @@ class Matrix {
                         end = start
                     }
                 }
-                if (this.matrix[x][y] === 0 || y === this.y-1){
+                if (this.matrix[x][y] === 0 || y === this.y - 1) {
                     if (start !== -1) {
                         // shift continued lines
                         this.shiftLine(x, start, end)
@@ -144,8 +155,8 @@ class Matrix {
     }
 
     cleanSuffix() {
-        for (let y = 0; y <= this.y-1; y++) {
-            for (let x = this.x-1; x >=0; x--) {
+        for (let y = 0; y <= this.y - 1; y++) {
+            for (let x = this.x - 1; x >= 0; x--) {
                 if (this.matrix[x][y] > 0) {
                     break
                 }
@@ -197,14 +208,21 @@ class Matrix {
             return
         }
         let node = this.nodes[nodeId]
-        let headings = parseHeading(node.markdown)
-        headings.forEach(heading => {
+        let parsed = parseHeading(node.markdown)
+        if (parsed.title !== null) {
+            this.toc.title = {
+                nodeName: parsed.title.nodeName,
+                innerText: parsed.title.innerText,
+                id: parsed.title.id,
+            }
+        }
+        parsed.headings.forEach(heading => {
             let h = {
                 nodeName: heading.nodeName,
                 innerText: heading.innerText,
                 id: heading.id,
             }
-            this.toc.push(h)
+            this.toc.headings.push(h)
         })
         let nodeRelation = this.nodeRelations[nodeId]
         if (nodeRelation.child > 0) {
