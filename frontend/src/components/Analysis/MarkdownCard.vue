@@ -31,12 +31,12 @@
                 <b-icon-arrow-left/>
               </b-link>
             </b-badge>
-            <b-badge class="ml-1" pill :variant="active ? 'info' : 'light'" @click.stop="insertUp">
+            <b-badge class="ml-1" pill :variant="active ? 'info' : 'light'" @click.stop="insert">
               <b-link class="text-white">
                 <b-icon-arrow-bar-up/>
               </b-link>
             </b-badge>
-            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="insertLeft">
+            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="caller">
               <b-link class="text-white">
                 <b-icon-arrow-bar-left/>
               </b-link>
@@ -125,16 +125,10 @@ export default {
       }
     },
     insert() {
-      this.$emit('insert', this.nodeId, this.lastId)
+      this.$emit('insert', this.nodeId)
     },
     caller() {
-      this.$emit('caller', this.nodeId, this.parentId)
-    },
-    insertUp() {
-      this.$emit('insertUp', this.nodeId, this.lastId)
-    },
-    insertLeft() {
-      this.$emit('insertLeft', this.nodeId, this.parentId)
+      this.$emit('caller', this.nodeId)
     },
     remove() {
       this.$emit('remove', this.nodeId)

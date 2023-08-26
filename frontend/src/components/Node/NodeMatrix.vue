@@ -328,30 +328,15 @@ export default {
       anchor('card-' + id)
       this.focus = id
     },
-    up(lastId) {
-      anchor('card-' + lastId)
-      this.focus = lastId
+    insert(id) {
+      this.baseNode = parseInt(id)
+      this.mode = modeInsertLast
+      this.$bvModal.show('node-common')
     },
-    insert(id, lastId) {
-      if (lastId !== undefined) {
-        anchor('card-' + lastId)
-        this.focus = lastId
-      } else {
-        this.baseNode = parseInt(id)
-        this.mode = modeInsertLast
-        this.$bvModal.show('node-common')
-      }
-    },
-    caller(id, parentId) {
-      console.log("caller: ", id, parentId)
-      if (parentId !== undefined) {
-        anchor('card-' + parentId)
-        this.focus = parentId
-      } else {
-        this.baseNode = parseInt(id)
-        this.mode = modeInsertCaller
-        this.$bvModal.show('node-common')
-      }
+    caller(id) {
+      this.baseNode = parseInt(id)
+      this.mode = modeInsertCaller
+      this.$bvModal.show('node-common')
     },
     remove(id) {
       if (confirm(`are you sure to delete #${id}? all of it's children will be deleted`)) {
