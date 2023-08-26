@@ -30,5 +30,11 @@ export default {
                 hide_node: (id) => `${api.v1.node_relation}/hide/${id}`,
             }
         }
+    },
+    directions: {
+        up: 1,
+        left: 2,
+        down: 3,
+        right: 4,
     }
 }

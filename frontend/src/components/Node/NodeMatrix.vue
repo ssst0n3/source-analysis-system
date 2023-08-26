@@ -83,7 +83,8 @@
                         :static-view="staticView"
                         :active="focus===node.ID"
                         v-on:update_node="refreshWorld"
-                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:remove="remove" v-on:caller="caller"
+                        v-on:navi="navi" v-on:remove="remove"
+                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:caller="caller"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
         </div>
@@ -322,6 +323,14 @@ export default {
         this.mode = modeCall
         this.$bvModal.show('node-common')
       }
+    },
+    navi(id) {
+      anchor('card-' + id)
+      this.focus = id
+    },
+    up(lastId) {
+      anchor('card-' + lastId)
+      this.focus = lastId
     },
     insert(id, lastId) {
       if (lastId !== undefined) {

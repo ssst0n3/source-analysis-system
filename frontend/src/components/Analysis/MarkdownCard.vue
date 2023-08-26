@@ -4,32 +4,49 @@
             @dblclick="$bvModal.show('modal-node-'+nodeId)">
       <template #header>
         <div class="text-right">
-          <b-badge pill :variant="active ? hasNext?'secondary':'info' : 'light'" @click.stop="next"
-                   v-if="!staticView || hasNext">
+          <b-badge comment="just a place holder" pill variant="light">
             <b-link class="text-white">
-              <b-icon-arrow-down></b-icon-arrow-down>
+              <b-icon-arrow-up/>
             </b-link>
           </b-badge>
-          <b-badge pill :variant="active ? hasChild?'secondary':'info' : 'light'" @click.stop="call">
-            <b-link class="text-white">
-              <b-icon-arrow-right></b-icon-arrow-right>
-            </b-link>
-          </b-badge>
-          <b-badge pill :variant="active ? hasLast ? 'secondary' : 'info' : 'light'" @click.stop="insert">
-            <b-link class="text-white">
-              <b-icon-arrow-up></b-icon-arrow-up>
-            </b-link>
-          </b-badge>
-          <b-badge pill :variant="active ? hasParent ? 'secondary' : 'info' : 'light'" @click.stop="caller">
-            <b-link class="text-white">
-              <b-icon-arrow-left></b-icon-arrow-left>
-            </b-link>
-          </b-badge>
-          <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="remove">
-            <b-link class="text-white">
-              <b-icon-x></b-icon-x>
-            </b-link>
-          </b-badge>
+          <span v-if="active" >
+            <b-badge pill :variant="hasNext?'secondary':'info'" @click.stop="next"
+                     v-if="!staticView || hasNext">
+              <b-link class="text-white">
+                <b-icon-arrow-down/>
+              </b-link>
+            </b-badge>
+            <b-badge pill :variant="hasChild?'secondary':'info'" @click.stop="call">
+              <b-link class="text-white">
+                <b-icon-arrow-right/>
+              </b-link>
+            </b-badge>
+            <b-badge v-if="hasLast" pill variant="secondary" @click.stop="navi(directions.up)">
+              <b-link class="text-white">
+                <b-icon-arrow-up/>
+              </b-link>
+            </b-badge>
+            <b-badge v-if="hasParent" pill variant="secondary" @click.stop="navi(directions.left)">
+              <b-link class="text-white">
+                <b-icon-arrow-left/>
+              </b-link>
+            </b-badge>
+            <b-badge class="ml-1" pill :variant="active ? 'info' : 'light'" @click.stop="insertUp">
+              <b-link class="text-white">
+                <b-icon-arrow-bar-up/>
+              </b-link>
+            </b-badge>
+            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="insertLeft">
+              <b-link class="text-white">
+                <b-icon-arrow-bar-left/>
+              </b-link>
+            </b-badge>
+            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="remove">
+              <b-link class="text-white">
+                <b-icon-x></b-icon-x>
+              </b-link>
+            </b-badge>
+          </span>
         </div>
       </template>
       <MarkdownViewer :markdown="markdown" style="width: 100%"/>
@@ -68,6 +85,7 @@ export default {
       hasNext: this.nextId !== 0,
       hasChild: this.childId !== 0,
       hasLast: this.lastId !== undefined,
+      directions: consts.directions,
     };
   },
   methods: {
@@ -90,11 +108,33 @@ export default {
     call() {
       this.$emit('call', this.nodeId, this.childId)
     },
+    navi(direction) {
+      switch (direction) {
+        case this.directions.up:
+          this.$emit('navi', this.lastId)
+          break
+        case this.directions.left:
+          this.$emit('navi', this.parentId)
+          break
+        case this.directions.down:
+          this.$emit('navi', this.nextId)
+          break
+        case this.directions.right:
+          this.$emit('navi', this.childId)
+          break
+      }
+    },
     insert() {
       this.$emit('insert', this.nodeId, this.lastId)
     },
     caller() {
       this.$emit('caller', this.nodeId, this.parentId)
+    },
+    insertUp() {
+      this.$emit('insertUp', this.nodeId, this.lastId)
+    },
+    insertLeft() {
+      this.$emit('insertLeft', this.nodeId, this.parentId)
     },
     remove() {
       this.$emit('remove', this.nodeId)
