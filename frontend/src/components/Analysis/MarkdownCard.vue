@@ -26,7 +26,7 @@
                 <b-icon-arrow-up/>
               </b-link>
             </b-badge>
-            <b-badge v-if="hasParent" pill variant="secondary" @click.stop="navi(directions.left)">
+            <b-badge pill variant="secondary" @click.stop="navi(directions.left)">
               <b-link class="text-white">
                 <b-icon-arrow-left/>
               </b-link>
@@ -109,20 +109,22 @@ export default {
       this.$emit('call', this.nodeId, this.childId)
     },
     navi(direction) {
+      let navId
       switch (direction) {
         case this.directions.up:
-          this.$emit('navi', this.lastId)
+          navId = this.lastId
           break
         case this.directions.left:
-          this.$emit('navi', this.parentId)
+          navId = this.parentId
           break
         case this.directions.down:
-          this.$emit('navi', this.nextId)
+          navId = this.nextId
           break
         case this.directions.right:
-          this.$emit('navi', this.childId)
+          navId = this.childId
           break
       }
+      this.$emit('navi', this.nodeId, navId, direction)
     },
     insert() {
       this.$emit('insert', this.nodeId)

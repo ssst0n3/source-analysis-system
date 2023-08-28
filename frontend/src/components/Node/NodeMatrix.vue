@@ -128,6 +128,7 @@ export default {
     return {
       nodesMap: {},
       nodeRelationsMap: {},
+      matrix: {},
       nodeMatrix: [],
       mode: 0,
       baseNode: 0,
@@ -218,13 +219,13 @@ export default {
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
       console.log('time after data pulled is', `${new Date().getTime() - this.time_start}ms`)
-      let matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
-      matrix.childRecursive(0)
-      matrix.shift()
-      matrix.cleanSuffix()
-      this.nodeMatrix = matrix.dumpNode()
-      matrix.generateToc(this.root)
-      this.toc = matrix.toc
+      this.matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
+      this.matrix.childRecursive(0)
+      this.matrix.shift()
+      this.matrix.cleanSuffix()
+      this.nodeMatrix = this.matrix.dumpNode()
+      this.matrix.generateToc(this.root)
+      this.toc = this.matrix.toc
     },
     async refreshWorld() {
       this.plumbInstance.deleteEveryConnection()
@@ -324,9 +325,12 @@ export default {
         this.$bvModal.show('node-common')
       }
     },
-    navi(id) {
-      anchor('card-' + id)
-      this.focus = id
+    navi(nodeId, navId, direction) {
+      if (direction === consts.directions.left) {
+        navId = this.matrix.caller(nodeId)
+      }
+      anchor('card-' + navId)
+      this.focus = navId
     },
     insert(id) {
       this.baseNode = parseInt(id)

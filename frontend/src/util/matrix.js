@@ -232,6 +232,32 @@ class Matrix {
             this.generateToc(nodeRelation.next)
         }
     }
+
+    /*
+    * return caller's id
+    * type1:
+    *   caller -> callee
+    * type2:
+    *   caller -> node1
+    *               |
+    *              ...
+    *               |
+    *             callee
+    */
+    caller(id) {
+        let node = this.nodes[id]
+        if (id > 0) {
+            if (node.parent > 0) {
+                return node.parent
+            }
+            if (node.last > 0) {
+                return this.caller(node.last)
+            }
+        } else {
+            return undefined
+        }
+        return undefined
+    }
 }
 
 export default {
