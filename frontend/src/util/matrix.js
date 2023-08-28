@@ -1,4 +1,4 @@
-import {marked} from 'marked'
+import {marked} from "@/util/marked";
 
 function find_headings(doc) {
     let headings = []
@@ -39,7 +39,7 @@ function find_headings(doc) {
 
 
 function parseHeading(markdown) {
-    let rendered = marked(markdown)
+    let rendered = marked.parse(markdown)
     let div = document.createElement('div')
     div.innerHTML = rendered
     return find_headings(div)
