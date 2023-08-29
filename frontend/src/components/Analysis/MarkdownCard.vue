@@ -10,13 +10,13 @@
             </b-link>
           </b-badge>
           <span v-if="active" >
-            <b-badge pill :variant="hasNext?'secondary':'info'" @click.stop="next"
+            <b-badge pill :variant="hasNext?'secondary':'info'" @click.stop="navi(directions.down)"
                      v-if="!staticView || hasNext">
               <b-link class="text-white">
                 <b-icon-arrow-down/>
               </b-link>
             </b-badge>
-            <b-badge pill :variant="hasChild?'secondary':'info'" @click.stop="call">
+            <b-badge pill :variant="hasChild?'secondary':'info'" @click.stop="navi(directions.right)">
               <b-link class="text-white">
                 <b-icon-arrow-right/>
               </b-link>
@@ -31,12 +31,12 @@
                 <b-icon-arrow-left/>
               </b-link>
             </b-badge>
-            <b-badge class="ml-1" pill :variant="active ? 'info' : 'light'" @click.stop="insert">
+            <b-badge class="ml-1" pill :variant="active ? 'info' : 'light'" @click.stop="add(directions.up)">
               <b-link class="text-white">
                 <b-icon-arrow-bar-up/>
               </b-link>
             </b-badge>
-            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="caller">
+            <b-badge pill :variant="active ? 'info' : 'light'" @click.stop="add(directions.left)">
               <b-link class="text-white">
                 <b-icon-arrow-bar-left/>
               </b-link>
@@ -81,12 +81,18 @@ export default {
     active: Boolean,
   },
   data() {
+    let directions2Id = {}
+    directions2Id[consts.directions.up] = this.lastId
+    directions2Id[consts.directions.down] = this.nextId
+    directions2Id[consts.directions.left] = this.parentId
+    directions2Id[consts.directions.right] = this.childId
     return {
       hasNext: this.nextId !== 0,
       hasChild: this.childId !== 0,
       hasLast: this.lastId !== undefined,
       directions: consts.directions,
-    };
+      directions2Id: directions2Id,
+    }
   },
   methods: {
     async save() {
@@ -99,38 +105,23 @@ export default {
       this.$bvModal.hide('modal-node-' + this.nodeId)
       this.$emit('update_node')
     },
-    down() {
-      alert(1)
+    exists(nodeId) {
+      return nodeId !== undefined  && nodeId !== 0
     },
-    next() {
-      this.$emit('next', this.nodeId, this.nextId)
+    add(direction) {
+      this.$emit('add', this.nodeId, direction)
     },
-    call() {
-      this.$emit('call', this.nodeId, this.childId)
-    },
+    /*
+    * navi or add node
+    *
+    */
     navi(direction) {
-      let navId
-      switch (direction) {
-        case this.directions.up:
-          navId = this.lastId
-          break
-        case this.directions.left:
-          navId = this.parentId
-          break
-        case this.directions.down:
-          navId = this.nextId
-          break
-        case this.directions.right:
-          navId = this.childId
-          break
+      let navId = this.directions2Id[direction]
+      if (this.exists(navId) || direction === consts.directions.left) {
+        this.$emit('navi', this.nodeId, navId, direction)
+      } else {
+        this.add(direction)
       }
-      this.$emit('navi', this.nodeId, navId, direction)
-    },
-    insert() {
-      this.$emit('insert', this.nodeId)
-    },
-    caller() {
-      this.$emit('caller', this.nodeId)
     },
     remove() {
       this.$emit('remove', this.nodeId)

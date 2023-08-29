@@ -26,40 +26,11 @@
                      variant="light"
                      triggers="hover">
             <div>
-              <!--              <b-btn variant="light" v-if="node.next !== 0">-->
-              <!--                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>-->
-              <!--              </b-btn>-->
-              <!--              <b-btn @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>-->
-              <!--              <b-btn variant="light" class="ml-2" v-if="node.child !==0">-->
-              <!--                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>-->
-              <!--              </b-btn>-->
-              <!--              <b-btn @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>-->
-              <!--              <b-btn variant="light" class="ml-2" v-if="node.parent !==undefined">-->
-              <!--                <a @click.prevent="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>-->
-              <!--              </b-btn>-->
               <b-btn v-if="!staticView" class="ml-2">
                 <a @click="unlinkNodeFromParent(node.ID)">Delete</a>
               </b-btn>
             </div>
           </b-tooltip>
-          <!--          <b-tooltip boundary="document" placement="bottom" :target="'node-'+node.ID" variant="light"-->
-          <!--                     triggers="hover">-->
-          <!--            <div>-->
-          <!--              <b-btn size="sm" variant="light" v-if="node.next !== 0">-->
-          <!--                <a @click.prevent="anchor('card-'+node.next)" :href="'#card-'+node.next">Next</a>-->
-          <!--              </b-btn>-->
-          <!--              <b-btn size="sm" @click="next(node.ID)" v-else-if="!staticView">Next</b-btn>-->
-          <!--            </div>-->
-          <!--          </b-tooltip>-->
-          <!--          <b-tooltip boundary="document" placement="righttop" :target="'node-'+node.ID" variant="light"-->
-          <!--                     triggers="hover">-->
-          <!--            <div>-->
-          <!--              <b-btn size="sm" variant="light" class="ml-2" v-if="node.child !== 0">-->
-          <!--                <a @click.prevent="anchor('card-'+node.child)" :href="'#card-'+node.child">Call</a>-->
-          <!--              </b-btn>-->
-          <!--              <b-btn size="sm" @click="call(node.ID)" class="ml-2" v-else-if="!staticView">Call</b-btn>-->
-          <!--            </div>-->
-          <!--          </b-tooltip>-->
           <b-tooltip v-if="false" boundary="document" placement="lefttop" :target="'node-'+node.ID" variant="light"
                      triggers="hover">
             <div>
@@ -83,8 +54,7 @@
                         :static-view="staticView"
                         :active="focus===node.ID"
                         v-on:update_node="refreshWorld"
-                        v-on:navi="navi" v-on:remove="remove"
-                        v-on:next="next" v-on:call="call" v-on:insert="insert" v-on:caller="caller"
+                        v-on:navi="navi" v-on:add="add" v-on:remove="remove"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
         </div>
@@ -101,12 +71,6 @@
 
 <script>
 import Matrix from "@/util/matrix";
-
-const modeNext = 1
-const modeCall = 2
-const modeInsertLast = 3
-const modeInsertCaller = 4
-
 import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
 import lightweightRestful from "vue-lightweight_restful";
@@ -252,11 +216,11 @@ export default {
     },
     async update_node_relation(id) {
       switch (this.mode) {
-        case modeCall:
-        case modeNext:
+        case consts.directions.right:
+        case consts.directions.down:
           await this.update_node_relation_for_next_and_call(id)
           break
-        case modeInsertLast:
+        case consts.directions.up:
           await this.update_node_relation_for_insert(id)
           break
       }
@@ -290,9 +254,9 @@ export default {
     },
     async update_node_relation_for_next_and_call(id) {
       let data = {}
-      if (this.mode === modeCall) {
+      if (this.mode === consts.directions.right) {
         data.child = id
-      } else if (this.mode === modeNext) {
+      } else if (this.mode === consts.directions.down) {
         data.next = id
       }
       await lightweightRestful.api.post(consts.api.v1.node_relation.node_relation, null, {
@@ -305,26 +269,6 @@ export default {
         caller: this,
       })
     },
-    next(id, nextId) {
-      if (nextId !== 0) {
-        anchor('card-' + nextId)
-        this.focus = nextId
-      } else {
-        this.baseNode = parseInt(id)
-        this.mode = modeNext
-        this.$bvModal.show('node-common')
-      }
-    },
-    call(id, childId) {
-      if (childId !== 0) {
-        anchor('card-' + childId)
-        this.focus = childId
-      } else {
-        this.baseNode = parseInt(id)
-        this.mode = modeCall
-        this.$bvModal.show('node-common')
-      }
-    },
     navi(nodeId, navId, direction) {
       if (direction === consts.directions.left) {
         navId = this.matrix.caller(nodeId)
@@ -332,15 +276,10 @@ export default {
       anchor('card-' + navId)
       this.focus = navId
     },
-    insert(id) {
-      this.baseNode = parseInt(id)
-      this.mode = modeInsertLast
-      this.$bvModal.show('node-common')
-    },
-    caller(id) {
-      this.baseNode = parseInt(id)
-      this.mode = modeInsertCaller
-      this.$bvModal.show('node-common')
+    add(nodeId, direction) {
+        this.baseNode = parseInt(nodeId)
+        this.mode = direction
+        this.$bvModal.show('node-common')
     },
     remove(id) {
       if (confirm(`are you sure to delete #${id}? all of it's children will be deleted`)) {
