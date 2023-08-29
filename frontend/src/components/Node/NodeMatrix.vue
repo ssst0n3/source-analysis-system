@@ -1,8 +1,6 @@
 <template>
   <div>
-    <b-button class="download-btn" @click="downloadDataSource" v-if="!staticView">
-      <b-icon icon="download"/>
-    </b-button>
+    <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
@@ -22,31 +20,6 @@
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
         <div v-if="node.ID !== -1">
-          <b-tooltip v-if="false" offset="-200" boundary="document" placement="top" :target="'node-'+node.ID"
-                     variant="light"
-                     triggers="hover">
-            <div>
-              <b-btn v-if="!staticView" class="ml-2">
-                <a @click="unlinkNodeFromParent(node.ID)">Delete</a>
-              </b-btn>
-            </div>
-          </b-tooltip>
-          <b-tooltip v-if="false" boundary="document" placement="lefttop" :target="'node-'+node.ID" variant="light"
-                     triggers="hover">
-            <div>
-              <b-btn size="sm" variant="light" class="ml-2" v-if="node.parent !==undefined">
-                <a @click="anchor('card-'+node.parent)" :href="'#card-'+node.parent">Parent</a>
-              </b-btn>
-            </div>
-          </b-tooltip>
-          <b-tooltip v-if="false" boundary="document" placement="top" :target="'node-'+node.ID" variant="light"
-                     triggers="hover">
-            <div>
-              <b-btn size="sm">
-                INSERT
-              </b-btn>
-            </div>
-          </b-tooltip>
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
                         :next-id="node.next" :child-id="node.child" :last-id="node.last" :parent-id="node.parent"
@@ -79,10 +52,11 @@ import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import {anchor} from "@/util/util";
+import DownloadData from "@/components/Tool/DownloadData.vue";
 
 export default {
   name: "NodeMatrix",
-  components: {TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+  components: {DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
     root: Number,
     staticView: Boolean,
@@ -156,19 +130,6 @@ export default {
       await this.refreshData()
     },
     anchor: anchor,
-    downloadDataSource() {
-      let data = {
-        "matrix": this.nodeMatrix,
-        "toc": this.toc,
-      }
-      let marshaled = JSON.stringify(data)
-      const urlBlob = window.URL.createObjectURL(new Blob([marshaled]))
-      let fileLink = document.createElement('a');
-      fileLink.href = urlBlob;
-      fileLink.setAttribute('download', 'data-source.json');
-      document.body.appendChild(fileLink);
-      fileLink.click();
-    },
     async refreshData() {
       if (this.staticView) {
         let dataSource = await lightweightRestful.api.get(this.dataSource, null, {

@@ -51,24 +51,16 @@
       </template>
       <MarkdownViewer :markdown="markdown" style="width: 100%"/>
     </b-card>
-    <b-modal :id="'modal-node-'+nodeId" hide-footer size="xl">
-      <MarkdownEditor ref="markdown_editor" :markdown="markdown"/>
-      <div id="panel" class="float-right">
-        <b-btn @click="save">save</b-btn>
-      </div>
-    </b-modal>
   </div>
 </template>
 
 <script>
-import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
-import lightweightRestful from "vue-lightweight_restful";
 import consts from "@/util/const";
 import MarkdownViewer from "@/components/Markdown/MarkdownView.vue";
 
 export default {
   name: "MarkdownCard",
-  components: {MarkdownViewer, MarkdownEditor},
+  components: {MarkdownViewer},
   props: {
     nodeId: String,
     markdown: String,
@@ -95,16 +87,6 @@ export default {
     }
   },
   methods: {
-    async save() {
-      await lightweightRestful.api.put(consts.api.v1.node.item(this.nodeId), null, {
-        markdown: this.$refs.markdown_editor.edit
-      }, {
-        caller: this,
-        success_msg: 'update successfully'
-      })
-      this.$bvModal.hide('modal-node-' + this.nodeId)
-      this.$emit('update_node')
-    },
     exists(nodeId) {
       return nodeId !== undefined  && nodeId !== 0
     },
