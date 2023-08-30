@@ -1,7 +1,6 @@
 <template>
   <div>
-    <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light"
-            @dblclick="$bvModal.show('modal-node-'+nodeId)">
+    <b-card :border-variant="active ? 'info' : ''" header-bg-variant="light">
       <template #header>
         <div class="text-right">
           <b-badge comment="just a place holder" pill variant="light">

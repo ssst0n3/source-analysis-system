@@ -19,14 +19,13 @@
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <div v-if="node.ID !== -1">
+        <div v-if="node.ID !== -1" @dblclick="edit(node)">
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
                         :next-id="node.next" :child-id="node.child" :last-id="node.last" :parent-id="node.parent"
                         :has-parent="node.parent !== undefined"
                         :static-view="staticView"
                         :active="focus===node.ID"
-                        v-on:update_node="refreshWorld"
                         v-on:navi="navi" v-on:add="add" v-on:remove="remove"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
@@ -34,7 +33,7 @@
       </div>
     </div>
     <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
-      <MarkdownEditor ref="markdown_editor_common" markdown=""/>
+      <MarkdownEditor ref="markdown_editor_common" :markdown="markdown" />
       <div id="panel" class="float-right">
         <b-btn @click="save">save</b-btn>
       </div>
@@ -53,6 +52,8 @@ import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import {anchor} from "@/util/util";
 import DownloadData from "@/components/Tool/DownloadData.vue";
+import {update_node_relation} from "@/util/nodeRelation";
+import {createNode, updateNode} from "@/util/node";
 
 export default {
   name: "NodeMatrix",
@@ -69,7 +70,9 @@ export default {
       matrix: {},
       nodeMatrix: [],
       mode: 0,
+      mode_edit: false,
       baseNode: 0,
+      markdown: "",
       plumbInstance: null,
       nodeLoading: false,
       nodeRelationsLoading: false,
@@ -164,71 +167,28 @@ export default {
       //   this.drawLine()
       // })
     },
-    async save() {
-      let response = await lightweightRestful.api.post(consts.api.v1.node.node, null, {
-        markdown: this.$refs.markdown_editor_common.edit
-      }, {
-        caller: this,
-      })
-      let id = response.id
-      await this.update_node_relation(id)
+    edit(node) {
+      this.markdown = node.markdown
+      this.$bvModal.show('node-common')
+      this.baseNode = node.ID
+      this.mode_edit = true
+    },
+    resetMarkdownEditor() {
+      this.mode = 0
+      this.markdown = ""
+      this.mode_edit = false
       this.$bvModal.hide('node-common')
+    },
+    async save() {
+      let content = this.$refs.markdown_editor_common.edit
+      if (this.mode_edit) {
+        await updateNode(this, this.baseNode, content)
+      } else {
+        let id = await createNode(this, content)
+        await update_node_relation(this, this.mode, this.root, this.baseNode, id, this.nodesMap)
+      }
+      this.resetMarkdownEditor()
       await this.refreshWorld()
-    },
-    async update_node_relation(id) {
-      switch (this.mode) {
-        case consts.directions.right:
-        case consts.directions.down:
-          await this.update_node_relation_for_next_and_call(id)
-          break
-        case consts.directions.up:
-          await this.update_node_relation_for_insert(id)
-          break
-      }
-    },
-    async update_node_relation_for_insert(id) {
-      await lightweightRestful.api.post(consts.api.v1.node_relation.node_relation, null, {
-        root: this.root,
-        node: id,
-        next: this.baseNode
-      }, {
-        caller: this,
-      })
-
-      let baseNode = this.nodesMap[this.baseNode]
-      let parent = baseNode.parent
-      let last = baseNode.last
-      if (parent !== undefined) {
-        await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(parent), null, {
-          child: id,
-        }, {
-          caller: this,
-        })
-      }
-      if (last !== undefined) {
-        await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(last), null, {
-          next: id,
-        }, {
-          caller: this,
-        })
-      }
-    },
-    async update_node_relation_for_next_and_call(id) {
-      let data = {}
-      if (this.mode === consts.directions.right) {
-        data.child = id
-      } else if (this.mode === consts.directions.down) {
-        data.next = id
-      }
-      await lightweightRestful.api.post(consts.api.v1.node_relation.node_relation, null, {
-        root: this.root,
-        node: id,
-      }, {
-        caller: this,
-      })
-      await lightweightRestful.api.put(consts.api.v1.node_relation.update_node_relation_by_node(this.baseNode), null, data, {
-        caller: this,
-      })
     },
     navi(nodeId, navId, direction) {
       if (direction === consts.directions.left) {
@@ -238,9 +198,9 @@ export default {
       this.focus = navId
     },
     add(nodeId, direction) {
-        this.baseNode = parseInt(nodeId)
-        this.mode = direction
-        this.$bvModal.show('node-common')
+      this.baseNode = parseInt(nodeId)
+      this.mode = direction
+      this.$bvModal.show('node-common')
     },
     remove(id) {
       if (confirm(`are you sure to delete #${id}? all of it's children will be deleted`)) {
