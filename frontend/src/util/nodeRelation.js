@@ -26,7 +26,6 @@ async function update(caller, base, data) {
 }
 
 async function update_node_relation_insert(caller, root, base, node, nodesMap) {
-    await create_node_relation(caller, root, node, base)
     let baseNode = nodesMap[base]
     let parent = baseNode.parent
     let last = baseNode.last
@@ -49,10 +48,12 @@ async function update_node_relation(caller, direction, root, base, node, nodesMa
             await update(caller, base, {next: node})
             break
         case consts.directions.up:
+            await create_node_relation(caller, root, node, base)
             await update_node_relation_insert(caller, root, base, node, nodesMap)
             break
         case consts.directions.left:
-            alert("left")
+            await create_node_relation(caller, root, node, 0, base)
+            await update_node_relation_insert(caller, root, base, node, nodesMap)
             break
     }
 }
