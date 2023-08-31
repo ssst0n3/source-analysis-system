@@ -1,5 +1,6 @@
 <template>
   <div>
+    <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
     <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
@@ -54,10 +55,11 @@ import {anchor} from "@/util/util";
 import DownloadData from "@/components/Tool/DownloadData.vue";
 import {update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
+import DfsOption from "@/components/Tool/DfsOption.vue";
 
 export default {
   name: "NodeMatrix",
-  components: {DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+  components: {DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
     root: Number,
     staticView: Boolean,
@@ -65,6 +67,7 @@ export default {
   },
   data() {
     return {
+      dfs: false,
       nodesMap: {},
       nodeRelationsMap: {},
       matrix: {},
@@ -114,9 +117,13 @@ export default {
       this.$nextTick(() => {
         this.drawLine()
       })
-    }
+    },
   },
   methods: {
+    dfsOptionUpdate(checked) {
+      this.dfs = checked
+      this.refreshWorld()
+    },
     focusNode(id) {
       this.focus = id
     },
@@ -147,7 +154,7 @@ export default {
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
       console.log('time after data pulled is', `${new Date().getTime() - this.time_start}ms`)
-      this.matrix = new Matrix(this.root, this.nodesMap, this.nodeRelationsMap, false)
+      this.matrix = new Matrix(this.root, this.nodesMap, this.nodeRelationsMap, this.dfs)
       // this.matrix.childRecursive(0)
       this.matrix.shift()
       // this.matrix.cleanSuffix()
@@ -313,14 +320,6 @@ export default {
 /*noinspection CssUnusedSymbol*/
 /deep/ .modal-content {
   height: 100%;
-}
-
-.download-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 100px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border: none;
 }
 
 /*/deep/ code {*/
