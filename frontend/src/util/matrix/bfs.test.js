@@ -1,4 +1,4 @@
-import Matrix from './matrix'
+import {BFS} from './bfs'
 
 let MapNodeRelations = {
     2: {
@@ -12,7 +12,7 @@ let MapNodeRelations = {
         ID: 3,
         node: 3,
         root: 1,
-        next: 0,
+        next: 6,
         child: 0,
     },
     4: {
@@ -35,16 +35,20 @@ let MapNodeRelations = {
         root: 1,
         next: 0,
         child: 0
+    },
+    6: {
+        ID: 6,
+        node: 6,
+        root: 1,
+        next: 0,
+        child: 0,
     }
 }
 
 // eslint-disable-next-line no-undef
-test('next recursive', () => {
-    let matrix = new Matrix.Matrix(1, [], MapNodeRelations)
-    matrix.childRecursive(0)
-    matrix.print()
-    matrix.shift()
-    matrix.print()
-    matrix.cleanSuffix()
+test('bfs', () => {
+    let matrix = new BFS(1, MapNodeRelations)
     matrix.print()
 });
+
+export {MapNodeRelations}

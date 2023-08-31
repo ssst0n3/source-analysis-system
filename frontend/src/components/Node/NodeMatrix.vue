@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Matrix from "@/util/matrix";
+import {Matrix} from "@/util/matrix/matrix";
 import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
 import lightweightRestful from "vue-lightweight_restful";
@@ -147,10 +147,10 @@ export default {
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
       console.log('time after data pulled is', `${new Date().getTime() - this.time_start}ms`)
-      this.matrix = new Matrix.Matrix(this.root, this.nodesMap, this.nodeRelationsMap)
-      this.matrix.childRecursive(0)
+      this.matrix = new Matrix(this.root, this.nodesMap, this.nodeRelationsMap, false)
+      // this.matrix.childRecursive(0)
       this.matrix.shift()
-      this.matrix.cleanSuffix()
+      // this.matrix.cleanSuffix()
       this.nodeMatrix = this.matrix.dumpNode()
       this.matrix.generateToc(this.root)
       this.toc = this.matrix.toc

@@ -1,102 +1,23 @@
-import {marked} from "@/util/marked";
-
-function find_headings(doc) {
-    let headings = []
-    let tag_names = {
-        h1: 1,
-        h2: 1,
-        h3: 1,
-        h4: 1,
-        h5: 1,
-        h6: 1
-    }
-    let title = null
-
-    function walk(root) {
-        if (root.nodeType === 1 && root.nodeName !== 'script') {
-            if (Object.prototype.hasOwnProperty.call(tag_names, root.nodeName.toLowerCase())) {
-                if (root.getAttribute("class") === null) {
-                    if (title === null && root.nodeName.toLowerCase() === "h1") {
-                        title = root
-                    } else {
-                        headings.push(root);
-                    }
-                }
-            } else {
-                for (let i = 0; i < root.childNodes.length; i++) {
-                    walk(root.childNodes[i]);
-                }
-            }
-        }
-    }
-
-    walk(doc);
-    return {
-        title: title,
-        headings: headings,
-    }
-}
-
-
-function parseHeading(markdown) {
-    let rendered = marked.parse(markdown)
-    let div = document.createElement('div')
-    div.innerHTML = rendered
-    return find_headings(div)
-}
+import {DFS} from "./dfs";
+import {BFS} from "./bfs";
+import {parseHeading} from "./toc";
 
 class Matrix {
-    constructor(root, nodes, nodeRelations) {
-        this.x = 1
-        this.y = 1
+    constructor(root, nodes, nodeRelations, dfs=false) {
+        let fs
+        if (dfs) {
+            fs = new DFS(root,  nodeRelations)
+        } else {
+            fs = new BFS(root, nodeRelations)
+        }
+        this.nodes = nodes
+        this.nodeRelations = nodeRelations
+        this.matrix = fs.matrix
+        this.x = fs.x
+        this.y = fs.y
         this.toc = {
             headings: [],
             title: null
-        }
-        this.matrix = [[root]]
-        this.nodes = nodes
-        this.nodeRelations = nodeRelations
-        this.nextRecursive(root)
-    }
-
-    nextRecursive(id) {
-        if (id === 0) {
-            return
-        }
-        let nodeRelation = this.nodeRelations[id]
-        if (nodeRelation.next === 0) {
-            for (let y = this.matrix[this.x - 1].length; y < this.y; y++) {
-                this.matrix[this.x - 1].push(0)
-            }
-            return
-        }
-        this.matrix[this.matrix.length - 1].push(nodeRelation.next)
-        let newLen = this.matrix[this.matrix.length - 1].length
-        if (newLen > this.y) {
-            for (let x = 0; x < this.x - 1; x++) {
-                this.matrix[x].push(0)
-            }
-            this.y = newLen
-        }
-        this.nextRecursive(nodeRelation.next)
-    }
-
-    childRecursive(x) {
-        for (let y = this.y - 1; y >= 0; y--) {
-            let id = this.matrix[x][y]
-            if (id === 0) {
-                continue
-            }
-            let node = this.nodeRelations[id]
-            if (node.child === 0) {
-                continue
-            }
-            let col = new Array(y).fill(0)
-            col.push(node.child)
-            this.matrix.push(col)
-            this.x += 1
-            this.nextRecursive(node.child)
-            this.childRecursive(this.x - 1)
         }
     }
 
@@ -260,6 +181,4 @@ class Matrix {
     }
 }
 
-export default {
-    Matrix: Matrix
-}
+export {Matrix}
