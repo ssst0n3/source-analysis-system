@@ -12,12 +12,12 @@ export default {
   },
   data() {
     return {
-      edit: this.markdown,
+      // edit: this.markdown,
     }
   },
   computed: {
     compiledMarkdown() {
-      return marked.parse(this.edit)
+      return marked.parse(this.markdown)
     }
   }
 }

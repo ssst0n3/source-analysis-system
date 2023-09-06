@@ -2,7 +2,7 @@
   <div id="previewer">
     <b-form-textarea v-model="edit" debounce="300"/>
 <!--    <div id="preview" v-html="compiledMarkdown"/>-->
-    <MarkdownViewer id="preview" :markdown="markdown"/>
+    <MarkdownViewer id="preview" :markdown="edit"/>
   </div>
 </template>
 
