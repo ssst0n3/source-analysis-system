@@ -9,6 +9,7 @@ export default {
     return {
       size: 'small',
       options: [
+        { value: 'x-small', text: 'x-small' },
         { value: 'small', text: 'small' },
         { value: 'medium', text: 'medium'},
         { value: 'large', text: 'large' },

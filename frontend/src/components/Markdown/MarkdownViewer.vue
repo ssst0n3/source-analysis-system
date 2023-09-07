@@ -23,9 +23,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.markdown-view {
-  font-size: small;
-}
-</style>
