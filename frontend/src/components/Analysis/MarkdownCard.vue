@@ -48,14 +48,14 @@
           </span>
         </div>
       </template>
-      <MarkdownViewer :markdown="markdown" style="width: 100%"/>
+      <MarkdownViewer :markdown="markdown" :size="size" style="width: 100%"/>
     </b-card>
   </div>
 </template>
 
 <script>
 import consts from "@/util/const";
-import MarkdownViewer from "@/components/Markdown/MarkdownView.vue";
+import MarkdownViewer from "@/components/Markdown/MarkdownViewer.vue";
 
 export default {
   name: "MarkdownCard",
@@ -70,6 +70,7 @@ export default {
     hasParent: Boolean,
     staticView: Boolean,
     active: Boolean,
+    size: String,
   },
   data() {
     let directions2Id = {}

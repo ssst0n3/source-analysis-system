@@ -1,4 +1,4 @@
 version: '3'
 services:
   source-analysis-system:
-    image: m.daocloud.io/ghcr.io/ssst0n3/source-analysis-system:v0.5.16
+    image: m.daocloud.io/ghcr.io/ssst0n3/source-analysis-system:v0.5.17

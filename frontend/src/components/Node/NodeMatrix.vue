@@ -3,6 +3,7 @@
     <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
     <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
+    <SizeOption ref="size_option" v-on:size_update="(s)=>{size=s}"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -27,6 +28,7 @@
                         :has-parent="node.parent !== undefined"
                         :static-view="staticView"
                         :active="focus===node.ID"
+                        :size="size"
                         v-on:navi="navi" v-on:add="add" v-on:remove="remove"
                         v-if="node.markdown.length>0"/>
           <AnalysisItem v-else/>
@@ -34,7 +36,7 @@
       </div>
     </div>
     <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
-      <MarkdownEditor ref="markdown_editor_common" :markdown="markdown" />
+      <MarkdownEditor ref="markdown_editor_common" :markdown="markdown" :size="size"/>
       <div id="panel" class="float-right">
         <b-btn @click="save">save</b-btn>
       </div>
@@ -56,10 +58,11 @@ import DownloadData from "@/components/Tool/DownloadData.vue";
 import {update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
 import DfsOption from "@/components/Tool/DfsOption.vue";
+import SizeOption from "@/components/Tool/SizeOption.vue";
 
 export default {
   name: "NodeMatrix",
-  components: {DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+  components: {SizeOption, DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
     root: Number,
     staticView: Boolean,
@@ -85,6 +88,7 @@ export default {
       },
       time_start: 0,
       focus: 0,
+      size: 'small',
     }
   },
   computed: {
@@ -96,7 +100,6 @@ export default {
     this.time_start = new Date().getTime()
     await this.refreshData()
   },
-
   mounted() {
     this.plumbInstance = jsPlumb.getInstance()
     this.plumbInstance.bind('click', function (conn) {

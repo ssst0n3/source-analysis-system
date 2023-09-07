@@ -2,7 +2,7 @@
   <div id="previewer">
     <b-form-textarea v-model="edit" debounce="300"/>
 <!--    <div id="preview" v-html="compiledMarkdown"/>-->
-    <MarkdownViewer id="preview" :markdown="edit"/>
+    <MarkdownViewer id="preview" :markdown="edit" :size="size"/>
   </div>
 </template>
 
@@ -10,7 +10,7 @@
 import {Marked} from "marked";
 import {markedHighlight} from "marked-highlight";
 import hljs from 'highlight.js';
-import MarkdownViewer from "@/components/Markdown/MarkdownView.vue";
+import MarkdownViewer from "@/components/Markdown/MarkdownViewer.vue";
 
 const marked = new Marked(
     markedHighlight({
@@ -27,6 +27,7 @@ export default {
   components: {MarkdownViewer},
   props: {
     markdown: String,
+    size: String,
   },
   data() {
     return {

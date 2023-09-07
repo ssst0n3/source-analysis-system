@@ -1,5 +1,5 @@
 <template>
-  <div id="view" v-html="compiledMarkdown"/>
+  <div id="view" v-html="compiledMarkdown" :style="{'font-size': size}"/>
 </template>
 
 <script>
@@ -9,6 +9,7 @@ export default {
   name: "MarkdownViewer",
   props: {
     markdown: String,
+    size: String,
   },
   data() {
     return {
@@ -24,5 +25,7 @@ export default {
 </script>
 
 <style scoped>
-
+.markdown-view {
+  font-size: small;
+}
 </style>
