@@ -3,6 +3,9 @@
     <b-form-textarea v-model="edit" debounce="300"/>
 <!--    <div id="preview" v-html="compiledMarkdown"/>-->
     <MarkdownViewer id="preview" :markdown="edit" :size="size"/>
+    <div id="panel-save" class="float-right">
+      <b-btn v-shortkey="{a: ['ctrl', 'enter'], b: ['meta', 'enter']}" @shortkey="save" @click="save">Save</b-btn>
+    </div>
   </div>
 </template>
 
@@ -34,14 +37,16 @@ export default {
       edit: this.markdown,
     }
   },
-  mounted() {
-
-  },
   computed: {
     compiledMarkdown() {
       let m = marked.parse(this.edit);
       console.log(m)
       return m
+    }
+  },
+  methods: {
+    save() {
+      this.$emit('save')
     }
   }
 }

@@ -17,6 +17,9 @@ import consts from "@/util/const";
 import lightweightRestful from "vue-lightweight_restful";
 lightweightRestful.api.initClient(consts.BaseUrl)
 
+import ShortKey from 'vue-shortkey'
+Vue.use(ShortKey)
+
 import router from '@/router'
 
 Vue.config.productionTip = false

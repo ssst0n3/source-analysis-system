@@ -14,12 +14,14 @@
     "d3": "^7.5.0",
     "highlight.js": "^11.8.0",
     "jsplumb": "^2.15.6",
+    "keymaster": "^1.6.2",
     "marked": "^7.0.2",
     "marked-gfm-heading-id": "^3.0.6",
     "marked-highlight": "^2.0.4",
     "vue": "^2.6.14",
     "vue-lightweight_restful": "^1.1.19",
-    "vue-router": "^3.5.2"
+    "vue-router": "^3.5.2",
+    "vue-shortkey": "^3.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

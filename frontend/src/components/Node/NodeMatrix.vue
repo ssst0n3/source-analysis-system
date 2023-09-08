@@ -36,10 +36,10 @@
       </div>
     </div>
     <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
-      <MarkdownEditor ref="markdown_editor_common" :markdown="markdown" :size="size"/>
-      <div id="panel" class="float-right">
-        <b-btn @click="save">save</b-btn>
-      </div>
+      <MarkdownEditor ref="markdown_editor_common"
+                      :markdown="markdown" :size="size"
+                      v-on:save="save"
+      />
     </b-modal>
   </div>
 </template>

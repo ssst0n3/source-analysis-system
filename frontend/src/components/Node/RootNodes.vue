@@ -20,10 +20,7 @@
         <b-form-input v-model="title"/>
       </b-form-group>
       <p>markdown</p>
-      <MarkdownEditor ref="create_root_node_markdown_editor" markdown=""/>
-      <div id="panel" class="float-right">
-        <b-btn @click="createRootNode">save</b-btn>
-      </div>
+      <MarkdownEditor ref="create_root_node_markdown_editor" markdown="" v-on:save="createRootNode"/>
     </b-modal>
   </div>
 </template>
