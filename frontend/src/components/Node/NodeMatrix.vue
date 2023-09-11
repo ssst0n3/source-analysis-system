@@ -52,6 +52,7 @@ import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
+// import NewMarkdownEditor from "@/components/Markdown/NewMarkdownEditor.vue";
 import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import {anchor} from "@/util/util";
 import DownloadData from "@/components/Tool/DownloadData.vue";

@@ -1,5 +1,5 @@
 <template>
-  <div id="view" v-html="compiledMarkdown" :style="{'font-size': size}"/>
+  <div id="view" class="overflow-auto" v-html="compiledMarkdown" :style="{'font-size': size}"/>
 </template>
 
 <script>
@@ -23,3 +23,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>

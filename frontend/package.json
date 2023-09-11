@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^1.0.2",
+    "@kangc/v-md-editor": "^1.7.11",
     "bootstrap-vue": "^2.22.0",
     "core-js": "^3.8.3",
     "d3": "^7.5.0",

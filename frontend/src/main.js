@@ -7,7 +7,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
-// import hljs from "highlight.js";
 import highlightPlugin from "@highlightjs/vue-plugin";
 import 'highlight.js/styles/github.css'
 import 'highlight.js/lib/common';
@@ -19,6 +18,16 @@ lightweightRestful.api.initClient(consts.BaseUrl)
 
 import ShortKey from 'vue-shortkey'
 Vue.use(ShortKey)
+
+import hljs from "highlight.js";
+import VMdEditor from '@kangc/v-md-editor';
+import '@kangc/v-md-editor/lib/style/base-editor.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+VMdEditor.use(githubTheme, {
+  Hljs: hljs,
+});
+Vue.use(VMdEditor)
 
 import router from '@/router'
 

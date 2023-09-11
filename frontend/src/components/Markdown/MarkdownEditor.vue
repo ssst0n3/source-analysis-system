@@ -1,11 +1,17 @@
 <template>
-  <div id="previewer">
-    <b-form-textarea v-model="edit" debounce="300"/>
-<!--    <div id="preview" v-html="compiledMarkdown"/>-->
-    <MarkdownViewer id="preview" :markdown="edit" :size="size"/>
-    <div id="panel-save" class="float-right">
-      <b-btn v-shortkey="{a: ['ctrl', 'enter'], b: ['meta', 'enter']}" @shortkey="save" @click="save">Save</b-btn>
-    </div>
+  <div class="h-100">
+    <b-card no-body id="previewer" class="h-100">
+      <b-card-body class="h-90">
+        <b-form-textarea class="h-100 d-inline-block overflow-auto"
+                         v-if="true" v-model="edit" debounce="300"/>
+        <MarkdownViewer class="d-inline-block overflow-auto text-break"
+                        v-if="true" id="preview" :markdown="edit" :size="size"/>
+      </b-card-body>
+      <template #footer>
+        <b-btn v-shortkey="{a: ['ctrl', 'enter'], b: ['meta', 'enter']}" @shortkey="save"
+               @click="save" class="float-right">Save</b-btn>
+      </template>
+    </b-card>
   </div>
 </template>
 
@@ -56,21 +62,22 @@ export default {
 #previewer {
   margin: 0;
   width: 100%;
-  height: 85%;
-  display: inline-block;
-  overflow-wrap: break-word;
+  //height: 100% !important;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  //color: #333;
+//color: #333;
 }
 
 textarea,
 #preview {
-  display: inline-block;
   width: 49%;
-  height: 100%;
   vertical-align: top;
   box-sizing: border-box;
   padding: 0 20px;
+  height: 400px;
+}
+
+#preview {
+  max-height: 100%;
 }
 
 textarea {
@@ -81,12 +88,10 @@ textarea {
   background-color: #f6f6f6;
   font-size: 14px;
   font-family: "Monaco", courier, monospace;
-  height: 100% !important;
   padding: 20px;
 }
 
-code {
-  //color: #f66;
+.h-90 {
+  height: 90% !important;
 }
-
 </style>
