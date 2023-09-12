@@ -180,9 +180,9 @@ export default {
     },
     edit(node) {
       this.markdown = node.markdown
-      this.$bvModal.show('node-common')
       this.baseNode = node.ID
       this.mode_edit = true
+      this.$bvModal.show('node-common')
     },
     resetMarkdownEditor() {
       this.mode = 0
@@ -209,6 +209,7 @@ export default {
       this.focus = navId
     },
     add(nodeId, direction) {
+      this.resetMarkdownEditor()
       this.baseNode = parseInt(nodeId)
       this.mode = direction
       this.$bvModal.show('node-common')
