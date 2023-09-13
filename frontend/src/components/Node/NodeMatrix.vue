@@ -4,6 +4,7 @@
     <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
     <SizeOption ref="size_option" v-on:size_update="(s)=>{size=s}"/>
+    <NodesCount :count="nodesCount"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -60,10 +61,13 @@ import {update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
 import DfsOption from "@/components/Tool/DfsOption.vue";
 import SizeOption from "@/components/Tool/SizeOption.vue";
+import NodesCount from "@/components/Tool/NodesCount.vue";
 
 export default {
   name: "NodeMatrix",
-  components: {SizeOption, DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+  components: {
+    NodesCount,
+    SizeOption, DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
     root: Number,
     staticView: Boolean,
@@ -76,6 +80,7 @@ export default {
       nodeRelationsMap: {},
       matrix: {},
       nodeMatrix: [],
+      nodesCount: 0,
       mode: 0,
       mode_edit: false,
       baseNode: 0,
@@ -161,6 +166,7 @@ export default {
       this.matrix = new Matrix(this.root, this.nodesMap, this.nodeRelationsMap, this.dfs)
       // this.matrix.childRecursive(0)
       this.matrix.shift()
+      this.nodesCount = this.matrix.count()
       // this.matrix.cleanSuffix()
       this.nodeMatrix = this.matrix.dumpNode()
       this.matrix.generateToc(this.root)

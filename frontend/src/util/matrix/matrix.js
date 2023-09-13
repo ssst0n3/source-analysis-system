@@ -179,6 +179,14 @@ class Matrix {
         }
         return undefined
     }
+
+    count() {
+        let c = 0
+        for (let i = 0; i < this.x; i ++ ) {
+            c += this.matrix[i].filter(x => x > 0).length
+        }
+        return c
+    }
 }
 
 export {Matrix}

@@ -8,4 +8,5 @@ test('union', () => {
     matrix.print()
     matrix.cleanSuffix()
     matrix.print()
+    process.stdout.write("count: " + matrix.count().toString())
 });
