@@ -4,7 +4,7 @@
     <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
     <SizeOption ref="size_option" v-on:size_update="(s)=>{size=s}"/>
-    <NodesCount :count="nodesCount"/>
+    <NodesCount toolbar :count="nodesCount"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -283,7 +283,7 @@ export default {
     },
     async listNodeRelationsByRoot(id) {
       this.nodeRelationsLoading = true
-      let nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.item(id), null, {
+      let nodeRelations = await lightweightRestful.api.get(consts.api.v1.node_relation.list(id), null, {
         caller: this,
         success_msg: 'list node_relation successfully'
       })

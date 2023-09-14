@@ -24,6 +24,8 @@ export default {
             },
             node_relation: {
                 node_relation: api.v1.node_relation,
+                list: (id) => `${api.v1.node_relation}/list/${id}`,
+                count: (id) => `${api.v1.node_relation}/count/${id}`,
                 item: (id) => `${api.v1.node_relation}/${id}`,
                 update_node_relation_by_node: (id) => `${api.v1.node_relation}/node/${id}`,
                 // unlink: (id) => `${api.v1.node_relation}/unlink/${id}`,

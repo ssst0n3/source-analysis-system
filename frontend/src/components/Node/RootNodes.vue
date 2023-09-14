@@ -3,8 +3,9 @@
     <b-btn @click="$bvModal.show('modal-create-root-node')">
       <b-icon icon="plus"/>
     </b-btn>
-    <div v-for="node in nodes" :key="node.id">
-      <router-link :to="`/node/${node.ID}`">{{ node.title }}</router-link>
+    <div v-for="item in nodes" :key="item.id">
+      <router-link :to="`/node/${item.node.ID}`">{{ item.node.title }}</router-link>
+      <NodesCount class="ml-5" :count="item.count"/>
     </div>
     <b-modal id="modal-create-root-node" hide-footer size="xl">
       <b-form-group
@@ -29,14 +30,16 @@
 import lightweightRestful from "vue-lightweight_restful";
 import consts from "@/util/const";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
+import NodesCount from "@/components/Tool/NodesCount.vue";
 
 export default {
   name: "RootNodes",
-  components: {MarkdownEditor},
+  components: {NodesCount, MarkdownEditor},
   data() {
     return {
       nodes: [],
       title: "",
+      counts: [],
     }
   },
   created() {
@@ -44,9 +47,16 @@ export default {
   },
   methods: {
     async listNodesByRoot() {
-      this.nodes = await lightweightRestful.api.get(consts.api.v1.node.list(0), null, {
+      let nodes = await lightweightRestful.api.get(consts.api.v1.node.list(0), null, {
         caller: this,
       })
+      for (let i = 0; i < nodes.length; i++) {
+        let node = nodes[i]
+        let count = await lightweightRestful.api.get(consts.api.v1.node_relation.count(node.ID), null, {
+          caller: this,
+        })
+        this.nodes.push({node: node, count: count})
+      }
     },
     async createRootNode() {
       let response = await lightweightRestful.api.post(consts.api.v1.node.node, null, {

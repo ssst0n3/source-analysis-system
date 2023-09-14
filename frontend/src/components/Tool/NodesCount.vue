@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <span class="nodes-count">{{ count }} nodes</span>
-  </div>
+  <span :class="toolbar ? 'nodes-count' : ''">{{ count }} nodes</span>
 </template>
 
 <script>
@@ -10,10 +8,10 @@ export default {
   name: "NodesCount",
   props: {
     count: Number,
+    toolbar: Boolean,
   },
   data() {
-    return {
-    }
+    return {}
   }
 }
 </script>

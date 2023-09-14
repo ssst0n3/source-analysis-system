@@ -27,6 +27,19 @@ func ListByRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, nodeRelations)
 }
 
+func CountByRoot(c *gin.Context) {
+	id, err := node.ParseId(c)
+	if err != nil {
+		return
+	}
+	count, err := db.CountNodeRelationsByRootWithRoot(uint(id))
+	if err != nil {
+		lightweight_api.HandleStatusBadRequestError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, count)
+}
+
 func UpdateNodeRelationByNode(c *gin.Context) {
 	id, err := node.ParseId(c)
 	if err != nil {

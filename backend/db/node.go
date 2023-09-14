@@ -67,6 +67,16 @@ func ListNodeRelationsByRootWithRoot(root uint) (nodeRelations []model.NodeRelat
 	return
 }
 
+func CountNodeRelationsByRootWithRoot(root uint) (count int64, err error) {
+	err = DB.Model(model.NodeRelation{}).Where(model.SchemaNodeRelation.FieldsByName["Root"].DBName, root).Count(&count).Error
+	if err != nil {
+		awesome_error.CheckErr(err)
+		return
+	}
+	count += 1
+	return
+}
+
 func mapNodeRelationsByRoot(root uint) (nodeRelations map[uint]model.NodeRelation, err error) {
 	nodeRelations = map[uint]model.NodeRelation{}
 	nodeRelationsList, err := ListNodeRelationsByRootWithRoot(root)
