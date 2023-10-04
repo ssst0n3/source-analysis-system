@@ -35,9 +35,6 @@ export default {
 
 <style scoped>
 .toc-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   background-color: rgba(0, 0, 0, 0.2);
   border: none;
 }

@@ -1,11 +1,8 @@
 <template>
   <div>
-    <ToolBar v-on:dfs-option-update="dfsOptionUpdate"/>
-    <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
-    <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
-    <TableOfContent :toc="toc"/>
-    <SizeOption ref="size_option" v-on:size_update="(s)=>{size=s}"/>
-    <NodesCount toolbar :count="nodesCount"/>
+    <ToolBar :toc="toc" :static-view="staticView" :node-matrix="nodeMatrix" :nodes-count="nodesCount"
+             v-on:size_update="(s)=>{size=s}"
+             v-on:dfs-option-update="dfsOptionUpdate"/>
     <b-toast id="my-toast" variant="warning" solid no-auto-hide :visible="loading">
       <template #toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -54,23 +51,16 @@ import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
-// import NewMarkdownEditor from "@/components/Markdown/NewMarkdownEditor.vue";
-import TableOfContent from "@/components/TableOfContent/TableOfContent";
 import {anchor} from "@/util/util";
-import DownloadData from "@/components/Tool/DownloadData.vue";
 import {update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
-import DfsOption from "@/components/Tool/DfsOption.vue";
-import SizeOption from "@/components/Tool/SizeOption.vue";
-import NodesCount from "@/components/Tool/NodesCount.vue";
 import ToolBar from "@/components/Tool/ToolBar.vue";
 
 export default {
   name: "NodeMatrix",
   components: {
-    ToolBar,
-    NodesCount,
-    SizeOption, DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
+    ToolBar, AnalysisItem, MarkdownCard, MarkdownEditor
+  },
   props: {
     root: Number,
     staticView: Boolean,

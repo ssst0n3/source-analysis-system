@@ -1,5 +1,5 @@
 <template>
-  <span :class="toolbar ? 'nodes-count' : ''">{{ count }} nodes</span>
+  <span class="align-middle">{{ count }} nodes</span>
 </template>
 
 <script>
@@ -17,11 +17,4 @@ export default {
 </script>
 
 <style scoped>
-.nodes-count {
-  width: 8%;
-  position: fixed;
-  bottom: 20px;
-  right: 360px;
-  border: none;
-}
 </style>

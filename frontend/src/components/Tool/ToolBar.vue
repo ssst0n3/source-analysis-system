@@ -1,11 +1,23 @@
 <template>
-  <div>
-    <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
-    <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
-    <TableOfContent :toc="toc"/>
-    <SizeOption ref="size_option" v-on:size_update="size_update"/>
-    <NodesCount toolbar :count="nodesCount"/>
-  </div>
+  <b-container class="toolbar">
+    <b-row align-v="center">
+      <b-col>
+        <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
+      </b-col>
+      <b-col>
+        <SizeOption ref="size_option" v-on:size_update="size_update"/>
+      </b-col>
+      <b-col>
+        <NodesCount :count="nodesCount"/>
+      </b-col>
+      <b-col>
+        <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
+      </b-col>
+      <b-col>
+        <TableOfContent :toc="toc"/>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -38,5 +50,11 @@ export default {
 </script>
 
 <style scoped>
-
+.toolbar {
+  width: 18%;
+  position: fixed;
+  bottom: 20px;
+  right: 360px;
+  border: none;
+}
 </style>

@@ -7,12 +7,10 @@
 
 <script>
 import SideBar from "@/components/TableOfContent/SideBar";
-import SideBarStatic from "@/components/TableOfContent/SideBarStatic";
 
 export default {
   name: "TableOfContent",
-  // eslint-disable-next-line vue/no-unused-components
-  components: {SideBarStatic, SideBar},
+  components: {SideBar},
   props: {
     toc: Object,
   },

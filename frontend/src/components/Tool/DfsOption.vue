@@ -1,5 +1,5 @@
 <template>
-  <b-form-checkbox class="dfs-option" v-model="checked" name="check-button" size="lg" switch>
+  <b-form-checkbox v-model="checked" name="check-button" size="lg" switch>
     {{status}}
   </b-form-checkbox>
 </template>
@@ -26,11 +26,4 @@ export default {
 </script>
 
 <style scoped>
-.dfs-option {
-  position: fixed;
-  bottom: 20px;
-  right: 180px;
-  /*background-color: rgba(0, 0, 0, 0.2);*/
-  border: none;
-}
 </style>
