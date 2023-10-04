@@ -19,6 +19,8 @@ lightweightRestful.api.initClient(consts.BaseUrl)
 import ShortKey from 'vue-shortkey'
 Vue.use(ShortKey)
 
+Vue.use(require('vue-cookies'))
+
 import hljs from "highlight.js";
 import VMdEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ToolBar v-on:dfs-option-update="dfsOptionUpdate"/>
     <DfsOption v-on:dfs-option-update="dfsOptionUpdate"/>
     <DownloadData v-if="!staticView" :node-matrix="nodeMatrix" :toc="toc"/>
     <TableOfContent :toc="toc"/>
@@ -62,10 +63,12 @@ import {createNode, updateNode} from "@/util/node";
 import DfsOption from "@/components/Tool/DfsOption.vue";
 import SizeOption from "@/components/Tool/SizeOption.vue";
 import NodesCount from "@/components/Tool/NodesCount.vue";
+import ToolBar from "@/components/Tool/ToolBar.vue";
 
 export default {
   name: "NodeMatrix",
   components: {
+    ToolBar,
     NodesCount,
     SizeOption, DfsOption, DownloadData, TableOfContent, AnalysisItem, MarkdownCard, MarkdownEditor},
   props: {
