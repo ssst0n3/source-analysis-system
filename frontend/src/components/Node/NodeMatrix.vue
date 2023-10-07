@@ -40,6 +40,22 @@
                       v-on:save="save"
       />
     </b-modal>
+    <b-modal id="delete-prompt" @ok="deleteWithMode">
+      <b-form-group label="delete mode" v-slot="{ ariaDescribedby }">
+        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="1">
+          <b-icon-arrow-left-circle-fill variant="dark"/>
+          move children nodes left
+        </b-form-radio>
+        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="2">
+          <b-icon-arrow-up-circle-fill/>
+          move next nodes up
+        </b-form-radio>
+        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="3">
+          <b-icon-x-circle-fill/>
+          discard all children and next nodes
+        </b-form-radio>
+      </b-form-group>
+    </b-modal>
   </div>
 </template>
 
@@ -88,6 +104,10 @@ export default {
       time_start: 0,
       focus: 0,
       size: 'small',
+      modelDelete: {
+        node: -1,
+        mode: 0,
+      }
     }
   },
   computed: {
@@ -129,11 +149,6 @@ export default {
     focusNode(id) {
       this.focus = id
     },
-    // async unlinkNodeFromParent(id) {
-    //   await lightweightRestful.api.post(consts.api.v1.node_relation.unlink(id), null, null, {
-    //     caller: this,
-    //   })
-    // },
     async hideNode(id) {
       await lightweightRestful.api.delete(consts.api.v1.node_relation.hide_node(id), null, {
         caller: this,
@@ -214,8 +229,24 @@ export default {
       this.$bvModal.show('node-common')
     },
     remove(id) {
-      if (confirm(`are you sure to delete #${id}? all of it's children will be deleted`)) {
-        this.hideNode(id)
+      this.modelDelete.node = id
+      this.$bvModal.show('delete-prompt')
+    },
+    deleteWithMode() {
+      switch (this.modelDelete.mode) {
+        case 1:
+          console.log("TODO: move child nodes left")
+          break
+        case 2:
+          console.log("TODO: move next nodes up")
+          break
+        case 3:
+          this.hideNode(this.modelDelete.node);
+          break
+      }
+      this.modelDelete = {
+        node: 0,
+        mode: 0,
       }
     },
     mouseover() {
@@ -295,34 +326,15 @@ export default {
   visibility: hidden;
 }
 
-/*.node-anchor {*/
-/*  display: flex;*/
-/*  position: absolute;*/
-/*  width: 20px;*/
-/*  height: 20px;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  border-radius: 10px;*/
-/*  cursor: crosshair;*/
-/*  z-index: 9999;*/
-/*  background: -webkit-radial-gradient(sandybrown 10%, white 30%, #9a54ff 60%);*/
-/*}*/
-
-/*.anchor-top {*/
-/*  top: 20px;*/
-/*  left: 50%;*/
-/*  margin-left: 20px;*/
-/*}*/
-
 /*noinspection CssUnusedSymbol*/
-/deep/ .modal-dialog {
+/deep/ #node-common .modal-dialog {
   width: 90%;
   max-width: 100%;
   height: 90%;
 }
 
 /*noinspection CssUnusedSymbol*/
-/deep/ .modal-content {
+/deep/ #node-common .modal-content {
   height: 100%;
 }
 

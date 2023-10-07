@@ -1,6 +1,6 @@
 FROM golang:1.17-alpine AS backend
 #ENV GOPROXY="https://proxy.golang.org"
-ENV GOPROXY="https://goproxy.io,direct"
+ENV GOPROXY="https://goproxy.cn,https://goproxy.io,direct"
 COPY backend /backend
 WORKDIR /backend
 RUN GO111MODULE="on" GOPROXY=$GOPROXY go mod tidy
