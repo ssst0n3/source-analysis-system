@@ -68,7 +68,7 @@ import MarkdownCard from "@/components/Analysis/MarkdownCard";
 import AnalysisItem from "@/components/Analysis/AnalysisItem";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import {anchor} from "@/util/util";
-import {update_node_relation} from "@/util/nodeRelation";
+import {update, update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
 import ToolBar from "@/components/Tool/ToolBar.vue";
 
@@ -233,16 +233,34 @@ export default {
       this.$bvModal.show('delete-prompt')
     },
     deleteWithMode() {
+      let node = this.nodesMap[this.modelDelete.node]
+      console.log("node:", node)
+      let data = {}
+      let base = node.parent
+      let direction = 'child'
+      if (base === undefined) {
+        base = node.last
+        direction = 'next'
+      }
       switch (this.modelDelete.mode) {
         case 1:
-          console.log("TODO: move child nodes left")
+          alert("TODO: move children nodes left #74")
           break
         case 2:
-          console.log("TODO: move next nodes up")
+          if (node.next === 0) {
+            alert("There's no next nodes")
+            break
+          }
+          if (node.child === 0) {
+            data[direction] = node.next
+            update(this, base, data)
+            this.hideNode(this.modelDelete.node);
+          } else {
+            alert("TODO: move next nodes up, discard/preserve child nodes #77")
+          }
           break
         case 3:
           this.hideNode(this.modelDelete.node);
-          break
       }
       this.modelDelete = {
         node: 0,
