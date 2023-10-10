@@ -15,6 +15,7 @@ type Node struct {
 	Note            string `json:"note"`
 	Code            string `json:"code"`
 	Markdown        string `json:"markdown"`
+	Collapsed       bool   `json:"collapsed"`
 }
 
 type UpdateMarkdownBody struct {

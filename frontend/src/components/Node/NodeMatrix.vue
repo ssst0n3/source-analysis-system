@@ -23,13 +23,13 @@
         <div v-if="node.ID !== -1" @dblclick="edit(node)">
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
-                        :next-id="node.next" :child-id="node.child" :last-id="node.last" :parent-id="node.parent"
                         :has-parent="node.parent !== undefined"
                         :static-view="staticView"
                         :active="focus===node.ID"
                         :size="size"
                         :node="node"
-                        v-on:navi="navi" v-on:add="add" v-on:refresh="refreshData"
+                        :root="root"
+                        v-on:navi="navi" v-on:refresh="refreshData" v-on:refreshWorld="refreshWorld"
           />
         </div>
       </div>
@@ -194,18 +194,15 @@ export default {
       this.resetMarkdownEditor()
       await this.refreshWorld()
     },
-    navi(nodeId, navId, direction) {
+    navi(params) {
+      let nodeId = params[0]
+      let navId = params[1]
+      let direction = params[2]
       if (direction === consts.directions.left) {
         navId = this.matrix.caller(nodeId)
       }
       anchor('card-' + navId)
       this.focus = navId
-    },
-    add(nodeId, direction) {
-      this.resetMarkdownEditor()
-      this.baseNode = parseInt(nodeId)
-      this.mode = direction
-      this.$bvModal.show('node-common')
     },
     mouseover() {
       // console.log("mouseover")
