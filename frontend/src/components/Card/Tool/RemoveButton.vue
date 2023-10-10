@@ -43,6 +43,9 @@ export default {
     trigger() {
       this.$bvModal.show(`delete-prompt-${this.node.ID}`)
     },
+    reset() {
+      this.mode = 0
+    },
     remove() {
       let data = {}
       let base = this.node.parent
@@ -71,7 +74,7 @@ export default {
         case 3:
           this.hideNode(this.node.ID);
       }
-      this.mode = 0
+      this.reset()
     },
     async hideNode(id) {
       await lightweightRestful.api.delete(consts.api.v1.node_relation.hide_node(id), null, {
