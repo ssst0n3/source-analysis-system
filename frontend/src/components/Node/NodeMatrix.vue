@@ -28,9 +28,9 @@
                         :static-view="staticView"
                         :active="focus===node.ID"
                         :size="size"
-                        v-on:navi="navi" v-on:add="add" v-on:remove="remove"
-                        v-if="node.markdown.length>0"/>
-          <AnalysisItem v-else/>
+                        :node="node"
+                        v-on:navi="navi" v-on:add="add" v-on:refresh="refreshData"
+          />
         </div>
       </div>
     </div>
@@ -40,22 +40,6 @@
                       v-on:save="save"
       />
     </b-modal>
-    <b-modal id="delete-prompt" @ok="deleteWithMode">
-      <b-form-group label="delete mode" v-slot="{ ariaDescribedby }">
-        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="1">
-          <b-icon-arrow-left-circle-fill variant="dark"/>
-          move children nodes left
-        </b-form-radio>
-        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="2">
-          <b-icon-arrow-up-circle-fill/>
-          move next nodes up
-        </b-form-radio>
-        <b-form-radio v-model="modelDelete.mode" :aria-describedby="ariaDescribedby" :value="3">
-          <b-icon-x-circle-fill/>
-          discard all children and next nodes
-        </b-form-radio>
-      </b-form-group>
-    </b-modal>
   </div>
 </template>
 
@@ -64,18 +48,17 @@ import {Matrix} from "@/util/matrix/matrix";
 import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
 import lightweightRestful from "vue-lightweight_restful";
-import MarkdownCard from "@/components/Analysis/MarkdownCard";
-import AnalysisItem from "@/components/Analysis/AnalysisItem";
+import MarkdownCard from "@/components/Card/MarkdownCard";
 import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import {anchor} from "@/util/util";
-import {update, update_node_relation} from "@/util/nodeRelation";
+import {update_node_relation} from "@/util/nodeRelation";
 import {createNode, updateNode} from "@/util/node";
 import ToolBar from "@/components/Tool/ToolBar.vue";
 
 export default {
   name: "NodeMatrix",
   components: {
-    ToolBar, AnalysisItem, MarkdownCard, MarkdownEditor
+    ToolBar, MarkdownCard, MarkdownEditor
   },
   props: {
     root: Number,
@@ -104,10 +87,6 @@ export default {
       time_start: 0,
       focus: 0,
       size: 'small',
-      modelDelete: {
-        node: -1,
-        mode: 0,
-      }
     }
   },
   computed: {
@@ -227,45 +206,6 @@ export default {
       this.baseNode = parseInt(nodeId)
       this.mode = direction
       this.$bvModal.show('node-common')
-    },
-    remove(id) {
-      this.modelDelete.node = id
-      this.$bvModal.show('delete-prompt')
-    },
-    deleteWithMode() {
-      let node = this.nodesMap[this.modelDelete.node]
-      console.log("node:", node)
-      let data = {}
-      let base = node.parent
-      let direction = 'child'
-      if (base === undefined) {
-        base = node.last
-        direction = 'next'
-      }
-      switch (this.modelDelete.mode) {
-        case 1:
-          alert("TODO: move children nodes left #74")
-          break
-        case 2:
-          if (node.next === 0) {
-            alert("There's no next nodes")
-            break
-          }
-          if (node.child === 0) {
-            data[direction] = node.next
-            update(this, base, data)
-            this.hideNode(this.modelDelete.node);
-          } else {
-            alert("TODO: move next nodes up, discard/preserve child nodes #77")
-          }
-          break
-        case 3:
-          this.hideNode(this.modelDelete.node);
-      }
-      this.modelDelete = {
-        node: 0,
-        mode: 0,
-      }
     },
     mouseover() {
       // console.log("mouseover")
