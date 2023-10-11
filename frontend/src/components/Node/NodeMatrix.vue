@@ -20,7 +20,7 @@
            :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle"
            class="ml-5" :class="{hidden: node.ID === 0}">
-        <div v-if="node.ID !== -1" @dblclick="edit(node)">
+        <div v-if="node.ID !== -1">
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
                         :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
                         :has-parent="node.parent !== undefined"
@@ -34,12 +34,6 @@
         </div>
       </div>
     </div>
-    <b-modal id="node-common" hide-footer size="xl" v-if="!staticView">
-      <MarkdownEditor ref="markdown_editor_common"
-                      :markdown="markdown" :size="size"
-                      v-on:save="save"
-      />
-    </b-modal>
   </div>
 </template>
 
@@ -49,16 +43,13 @@ import consts from "@/util/const";
 import {jsPlumb} from "jsplumb";
 import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Card/MarkdownCard";
-import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
 import {anchor} from "@/util/util";
-import {update_node_relation} from "@/util/nodeRelation";
-import {createNode, updateNode} from "@/util/node";
 import ToolBar from "@/components/Tool/ToolBar.vue";
 
 export default {
   name: "NodeMatrix",
   components: {
-    ToolBar, MarkdownCard, MarkdownEditor
+    ToolBar, MarkdownCard
   },
   props: {
     root: Number,
@@ -170,29 +161,6 @@ export default {
       // this.$nextTick(() => {
       //   this.drawLine()
       // })
-    },
-    edit(node) {
-      this.markdown = node.markdown
-      this.baseNode = node.ID
-      this.mode_edit = true
-      this.$bvModal.show('node-common')
-    },
-    resetMarkdownEditor() {
-      this.mode = 0
-      this.markdown = ""
-      this.mode_edit = false
-      this.$bvModal.hide('node-common')
-    },
-    async save() {
-      let content = this.$refs.markdown_editor_common.edit
-      if (this.mode_edit) {
-        await updateNode(this, this.baseNode, content)
-      } else {
-        let id = await createNode(this, content)
-        await update_node_relation(this, this.mode, this.root, this.baseNode, id, this.nodesMap)
-      }
-      this.resetMarkdownEditor()
-      await this.refreshWorld()
     },
     navi(params) {
       let nodeId = params[0]

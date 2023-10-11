@@ -13,7 +13,7 @@
               </b-link>
             </b-badge>
             <span v-if="active">
-              <ToolBar :root="root" :static-view="staticView" :node="node"
+              <ToolBar :root="root" :static-view="staticView" :node="node" :size="size"
                        v-on:navi="$emit('navi', $event)"
                        v-on:refresh="$emit('refresh')"
                        v-on:refreshWorld="$emit('refreshWorld')"
