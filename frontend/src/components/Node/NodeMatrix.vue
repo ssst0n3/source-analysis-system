@@ -157,6 +157,7 @@ export default {
       this.nodeMatrix = this.matrix.dumpNode()
       this.matrix.generateToc(this.root)
       this.toc = this.matrix.toc
+      console.log('time after generate matrix', `${new Date().getTime() - this.time_start}ms`)
     },
     async refreshWorld() {
       this.plumbInstance.deleteEveryConnection()
@@ -183,6 +184,21 @@ export default {
     mouseover() {
       // console.log("mouseover")
     },
+    async doDrawLine(source, target, anchor) {
+      this.plumbInstance.connect({
+        source: 'node-' + source,
+        target: 'node-' + target,
+        anchor: anchor,
+        endpoint: 'Blank',
+        // connector: ['Flowchart'],
+        connector: ['Straight'],
+        overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
+        paintStyle: {stroke: '#909393', strokeWidth: 2},
+        // hoverPaintStyle: {
+        //   outlineStroke: 'lightblue'
+        // },
+      })
+    },
     drawLine() {
       let that = this
       // let plumbInstance = jsPlumb.getInstance()
@@ -194,31 +210,10 @@ export default {
               continue
             }
             if (node.child !== 0) {
-              that.plumbInstance.connect({
-                source: 'node-' + node.ID,
-                target: 'node-' + node.child,
-                anchor: ['Right', 'Left'],
-                endpoint: 'Blank',
-                // connector: ['Flowchart'],
-                connector: ['Straight'],
-                overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
-                paintStyle: {stroke: '#909393', strokeWidth: 2},
-                // hoverPaintStyle: {
-                //   outlineStroke: 'lightblue'
-                // },
-              })
+              that.doDrawLine(node.ID, node.child, ['Right', 'Left'])
             }
             if (node.next !== 0) {
-              that.plumbInstance.connect({
-                source: 'node-' + node.ID,
-                target: 'node-' + node.next,
-                anchor: ['Bottom', 'Top'],
-                endpoint: 'Blank',
-                // connector: ['Flowchart'],
-                connector: ['Straight'],
-                overlays: [['Arrow', {width: 16, length: 16, location: 1}]],
-                paintStyle: {stroke: '#909393', strokeWidth: 2},
-              })
+              that.doDrawLine(node.ID, node.next, ['Bottom', 'Top'])
             }
           }
         }
