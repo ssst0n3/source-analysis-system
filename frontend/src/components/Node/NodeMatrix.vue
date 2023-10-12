@@ -73,7 +73,6 @@ export default {
         headings: [],
         title: null,
       },
-      time_start: 0,
       focus: 0,
       activeNode: {markdown: ''},
       editorModel: {
@@ -89,7 +88,6 @@ export default {
     }
   },
   async created() {
-    this.time_start = new Date().getTime()
     await this.refreshData()
   },
   mounted() {
@@ -136,6 +134,7 @@ export default {
     },
     anchor: anchor,
     async refreshData() {
+      let time_start = new Date().getTime()
       if (this.staticView) {
         let dataSource = await lightweightRestful.api.get(this.dataSource, null, {
           caller: this,
@@ -145,10 +144,10 @@ export default {
         this.toc = dataSource["toc"]
         return
       }
-      console.log('time before data pulled is', `${new Date().getTime() - this.time_start}ms`)
+      console.log('time before data pulled is', `${new Date().getTime() - time_start}ms`)
       await this.listNodes(this.root)
       await this.listNodeRelationsByRoot(this.root)
-      console.log('time after data pulled is', `${new Date().getTime() - this.time_start}ms`)
+      console.log('time after data pulled is', `${new Date().getTime() - time_start}ms`)
       this.matrix = new Matrix(this.root, this.nodesMap, this.nodeRelationsMap, this.dfs)
       // this.matrix.childRecursive(0)
       this.matrix.shift()
@@ -157,7 +156,7 @@ export default {
       this.nodeMatrix = this.matrix.dumpNode()
       this.matrix.generateToc(this.root)
       this.toc = this.matrix.toc
-      console.log('time after generate matrix', `${new Date().getTime() - this.time_start}ms`)
+      console.log('time after generate matrix', `${new Date().getTime() - time_start}ms`)
     },
     async refreshWorld() {
       this.plumbInstance.deleteEveryConnection()
@@ -200,6 +199,7 @@ export default {
       })
     },
     drawLine() {
+      let time_start = new Date().getTime()
       let that = this
       // let plumbInstance = jsPlumb.getInstance()
       that.plumbInstance.ready(function () {
@@ -218,7 +218,7 @@ export default {
           }
         }
       })
-      console.log('time after line drawn cost is', `${new Date().getTime() - this.time_start}ms`)
+      console.log('time cose of drawLine() is', `${new Date().getTime() - time_start}ms`)
     },
     async listNodes(id) {
       this.nodeLoading = true
