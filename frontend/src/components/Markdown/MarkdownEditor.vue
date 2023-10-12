@@ -9,7 +9,7 @@
       </b-card-body>
       <template #footer>
         <b-btn v-shortkey="{a: ['ctrl', 'enter'], b: ['meta', 'enter']}" @shortkey="save"
-               @click="save" class="float-right">Save</b-btn>
+               @click="save" class="float-right"> {{ modeUpdate ? 'Update' : 'Save'}}</b-btn>
       </template>
     </b-card>
   </div>
@@ -37,6 +37,7 @@ export default {
   props: {
     markdown: String,
     size: String,
+    modeUpdate: Boolean,
   },
   data() {
     return {
