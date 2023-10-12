@@ -22,18 +22,16 @@
            class="ml-5" :class="{hidden: node.ID === 0}">
         <div v-if="node.ID !== -1">
           <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
-                        :markdown="node.markdown.toString()" :nodeId="node.ID.toString()"
-                        :has-parent="node.parent !== undefined"
-                        :static-view="staticView"
-                        :active="focus===node.ID"
-                        :size="size"
-                        :node="node"
-                        :root="root"
-                        v-on:navi="navi" v-on:refresh="refreshData" v-on:refreshWorld="refreshWorld"
+                        :static-view="staticView" :active="focus===node.ID" :size="size" :node="node"
+                        v-on:save="save" v-on:navi="navi"
           />
         </div>
       </div>
     </div>
+    <NodeEditor :static-view="staticView" :node="activeNode" :size="size" :model="editorModel" :root="root"
+                v-on:refresh="refreshData" v-on:refreshWorld="refreshWorld"/>
+    <NodeRemove :node="activeNode"
+                v-on:refresh="refreshData"/>
   </div>
 </template>
 
@@ -45,10 +43,14 @@ import lightweightRestful from "vue-lightweight_restful";
 import MarkdownCard from "@/components/Card/MarkdownCard";
 import {anchor} from "@/util/util";
 import ToolBar from "@/components/Tool/ToolBar.vue";
+import NodeEditor from "@/components/Node/NodeEditor";
+import NodeRemove from "@/components/Node/NodeRemove";
 
 export default {
   name: "NodeMatrix",
   components: {
+    NodeRemove,
+    NodeEditor,
     ToolBar, MarkdownCard
   },
   props: {
@@ -64,10 +66,6 @@ export default {
       matrix: {},
       nodeMatrix: [],
       nodesCount: 0,
-      mode: 0,
-      mode_edit: false,
-      baseNode: 0,
-      markdown: "",
       plumbInstance: null,
       nodeLoading: false,
       nodeRelationsLoading: false,
@@ -77,6 +75,11 @@ export default {
       },
       time_start: 0,
       focus: 0,
+      activeNode: {markdown: ''},
+      editorModel: {
+        update: false,
+        direction: 0,
+      },
       size: 'small',
     }
   },
@@ -112,12 +115,17 @@ export default {
     },
   },
   methods: {
+    save(model) {
+      this.editorModel = model
+      this.$bvModal.show('node-common-modal')
+    },
     dfsOptionUpdate(checked) {
       this.dfs = checked
       this.refreshWorld()
     },
     focusNode(id) {
       this.focus = id
+      this.activeNode = this.nodesMap[id]
     },
     async hideNode(id) {
       await lightweightRestful.api.delete(consts.api.v1.node_relation.hide_node(id), null, {

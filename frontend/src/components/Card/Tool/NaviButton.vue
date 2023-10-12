@@ -25,28 +25,17 @@
         <b-icon-arrow-left/>
       </b-link>
     </b-badge>
-    <b-modal :id="modalId" lazy hide-footer size="xl" v-if="!staticView">
-      <MarkdownEditor :ref="editorRef"
-                      :markdown="node.markdown" :size="size"
-                      v-on:save="save"
-      />
-    </b-modal>
   </span>
 </template>
 
 <script>
 import consts from "@/util/const";
-import MarkdownEditor from "@/components/Markdown/MarkdownEditor";
-import {createNode} from "@/util/node";
-import {update_node_relation} from "@/util/nodeRelation";
 
 export default {
   name: "NaviButton",
-  components: {MarkdownEditor},
   props: {
     staticView: Boolean,
     node: Object,
-    size: String,
   },
   data() {
     let directions2Id = {}
@@ -69,11 +58,6 @@ export default {
     }
   },
   methods: {
-    reset() {
-      this.direction = 0
-      this.markdown = ""
-      this.$bvModal.hide(this.modalId)
-    },
     exists(nodeId) {
       return nodeId !== undefined && nodeId !== 0
     },
@@ -82,20 +66,8 @@ export default {
       if (this.exists(navId) || direction === consts.directions.left) {
         this.$emit('navi', this.node.ID, navId, direction)
       } else {
-        this.add(direction)
+        this.$emit('save', {update: false, direction: direction})
       }
-    },
-    add(direction) {
-      this.reset()
-      this.direction = direction
-      this.$bvModal.show(this.modalId)
-    },
-    async save() {
-      let content = this.$refs[this.editorRef].edit
-      let newNodeId = await createNode(this, content)
-      await update_node_relation(this, this.direction, this.root, this.node, newNodeId)
-      this.reset()
-      await this.$emit('refresh')
     },
   }
 }

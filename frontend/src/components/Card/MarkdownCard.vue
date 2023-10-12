@@ -13,10 +13,8 @@
               </b-link>
             </b-badge>
             <span v-if="active">
-              <ToolBar :root="root" :static-view="staticView" :node="node" :size="size"
-                       v-on:navi="$emit('navi', $event)"
-                       v-on:refresh="$emit('refresh')"
-                       v-on:refreshWorld="$emit('refreshWorld')"
+              <ToolBar :static-view="staticView" :node="node"
+                       v-on:save="$emit('save', $event)" v-on:navi="$emit('navi', $event)"
               />
             </span>
           </b-col>
@@ -35,16 +33,11 @@ export default {
   name: "MarkdownCard",
   components: {ToolBar, MarkdownViewer},
   props: {
-    root: Number,
     node: Object,
     staticView: Boolean,
     active: Boolean,
     size: String,
   },
-  data() {
-    return {}
-  },
-  methods: {}
 }
 </script>
 

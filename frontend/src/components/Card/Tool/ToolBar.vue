@@ -1,17 +1,14 @@
 <template>
   <span>
-    <NaviButton :node="node"
-                v-on:navi="$emit('navi', arguments)" v-on:refresh="$emit('refreshWorld')"/>
+    <NaviButton :static-view="staticView" :node="node"
+                v-on:save="$emit('save', $event)" v-on:navi="$emit('navi', arguments)"/>
     <AddButton class="ml-1"
-               :root="root" :static-view="staticView" :node="node"
-               v-on:refresh="$emit('refreshWorld')"/>
+               v-on:save="$emit('save', $event)"/>
     <EditButton class="ml-3"
-                :static-view="staticView" :node="node" :size="size"
-                v-on:refresh="$emit('refresh')"/>
+                v-on:save="$emit('save', $event)"/>
     <CollapseButton class="ml-3"
                     :node="node"/>
-    <RemoveButton :node="node"
-                  v-on:refresh="$emit('refresh')"/>
+    <RemoveButton :node="node"/>
   </span>
 </template>
 
@@ -26,12 +23,9 @@ export default {
   name: "ToolBar",
   components: {EditButton, RemoveButton, CollapseButton, NaviButton, AddButton},
   props: {
-    root: Number,
     node: Object,
     staticView: Boolean,
-    size: String,
   },
-  methods: {}
 }
 </script>
 
