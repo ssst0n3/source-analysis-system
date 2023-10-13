@@ -3,10 +3,10 @@ import {BFS} from "./bfs";
 import {parseHeading} from "./toc";
 
 class Matrix {
-    constructor(root, nodes, nodeRelations, dfs=false) {
+    constructor(root, nodes, nodeRelations, dfs = false) {
         let fs
         if (dfs) {
-            fs = new DFS(root,  nodeRelations)
+            fs = new DFS(root, nodeRelations)
         } else {
             fs = new BFS(root, nodeRelations)
         }
@@ -114,10 +114,12 @@ class Matrix {
                         let next = this.nodes[node.next]
                         next.last = id
                     }
+                    nodeCol.push(node)
                 } else {
-                    node = {ID: id, markdown: ''}
+                    if (id === 0) {
+                        nodeCol.push({ID: id, markdown: ''})
+                    }
                 }
-                nodeCol.push(node)
             }
             matrix.push(nodeCol)
         }
@@ -182,7 +184,7 @@ class Matrix {
 
     count() {
         let c = 0
-        for (let i = 0; i < this.x; i ++ ) {
+        for (let i = 0; i < this.x; i++) {
             c += this.matrix[i].filter(x => x > 0).length
         }
         return c

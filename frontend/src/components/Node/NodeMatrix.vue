@@ -14,18 +14,14 @@
       <b-spinner/>
     </b-toast>
     <div v-for="(col, index) in nodeMatrix" :key="`col-${index}`" style="white-space: nowrap;" class="mt-5">
-      <div @mouseover="mouseover"
-           @click="focusNode(node.ID)"
-           :ref="'node-'+node.ID" :id="'node-'+node.ID" v-for="(node, index2) in col"
-           :key="`col-${index}-row-${index2}`"
-           style="display: inline-block; width: 500px; vertical-align:middle"
-           class="ml-5" :class="{hidden: node.ID === 0}">
-        <div v-if="node.ID !== -1">
-          <MarkdownCard style="white-space: normal" :id="'card-'+node.ID"
-                        :static-view="staticView" :active="focus===node.ID" :size="size" :node="node"
-                        v-on:save="save" v-on:navi="navi"
-          />
-        </div>
+      <div @mouseover="mouseover" @click="focusNode(node.ID)"
+           :ref="'node-'+node.ID" :id="'node-'+node.ID"
+           v-for="(node, index2) in col" :key="`col-${index}-row-${index2}`"
+           style="display: inline-block; width: 500px; vertical-align:middle" class="ml-5">
+        <MarkdownCard v-if="node.ID !== 0"
+                      style="white-space: normal" :id="'card-'+node.ID"
+                      :static-view="staticView" :active="focus===node.ID" :size="size" :node="node"
+                      v-on:save="save" v-on:navi="navi"/>
       </div>
     </div>
     <NodeEditor :static-view="staticView" :node="activeNode" :size="size" :model="editorModel" :root="root"
@@ -80,6 +76,7 @@ export default {
         direction: 0,
       },
       size: 'small',
+      time_start: 0,
     }
   },
   computed: {
@@ -90,7 +87,11 @@ export default {
   async created() {
     await this.refreshData()
   },
+  beforeMount() {
+    this.time_start = new Date().getTime()
+  },
   mounted() {
+    console.log('time cost of mounted', `${new Date().getTime() - this.time_start}ms`)
     this.plumbInstance = jsPlumb.getInstance()
     this.plumbInstance.bind('click', function (conn) {
       // console.log(conn, event)
@@ -152,7 +153,7 @@ export default {
       // this.matrix.childRecursive(0)
       this.matrix.shift()
       this.nodesCount = this.matrix.count()
-      // this.matrix.cleanSuffix()
+      this.matrix.cleanSuffix()
       this.nodeMatrix = this.matrix.dumpNode()
       this.matrix.generateToc(this.root)
       this.toc = this.matrix.toc
@@ -199,6 +200,7 @@ export default {
       })
     },
     drawLine() {
+      console.log("started to drawline", `${new Date().getTime() - this.time_start}ms`)
       let time_start = new Date().getTime()
       let that = this
       // let plumbInstance = jsPlumb.getInstance()

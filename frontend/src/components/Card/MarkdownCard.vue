@@ -4,7 +4,7 @@
       <template #header>
         <b-row>
           <b-col class="col-2">
-            <span v-show="active"> # {{ node.ID }}</span>
+            <span v-if="active"> # {{ node.ID }}</span>
           </b-col>
           <b-col class="text-right">
             <b-badge comment="place holder, do not delete me" pill variant="light">
