@@ -31,6 +31,10 @@ VMdEditor.use(githubTheme, {
 });
 Vue.use(VMdEditor)
 
+// copy to clipboard
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
 import router from '@/router'
 
 Vue.config.productionTip = false

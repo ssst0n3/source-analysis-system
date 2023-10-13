@@ -2,10 +2,11 @@
   <span>
     <NaviButton :static-view="staticView" :node="node"
                 v-on:save="save" v-on:navi="$emit('navi', arguments)"/>
-    <AddButton class="ml-1"
-               :directions="directions" :save="save"/>
-    <EditButton class="ml-3"
-                :save="save"/>
+    <span class="ml-3"><AddButton :directions="directions" :save="save"/></span>
+    <span class="ml-3">
+      <CopyButton :node="node"/>
+      <EditButton :save="save"/>
+    </span>
     <CollapseButton class="ml-3"
                     :node="node"/>
     <RemoveButton :node="node"/>
@@ -19,10 +20,11 @@ import CollapseButton from "@/components/Card/Tool/CollapseButton";
 import RemoveButton from "@/components/Card/Tool/RemoveButton";
 import EditButton from "@/components/Card/Tool/EditButton";
 import consts from "@/util/const";
+import CopyButton from "@/components/Card/Tool/CopyButton";
 
 export default {
   name: "ToolBar",
-  components: {EditButton, RemoveButton, CollapseButton, NaviButton, AddButton},
+  components: {CopyButton, EditButton, RemoveButton, CollapseButton, NaviButton, AddButton},
   props: {
     node: Object,
     staticView: Boolean,
