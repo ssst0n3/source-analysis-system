@@ -8,7 +8,7 @@ services:
     volumes:
       - source-analysis-system_secret:/secret
   source-analysis-system:
-    image: ghcr.io/ssst0n3/source-analysis-system:v0.5.31
+    image: ghcr.io/ssst0n3/source-analysis-system:v0.5.32
     restart: always
     ports:
       - "16080:8080"

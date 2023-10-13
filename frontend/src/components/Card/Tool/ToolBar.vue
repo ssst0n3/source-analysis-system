@@ -1,11 +1,11 @@
 <template>
   <span>
     <NaviButton :static-view="staticView" :node="node"
-                v-on:save="$emit('save', $event)" v-on:navi="$emit('navi', arguments)"/>
+                v-on:save="save" v-on:navi="$emit('navi', arguments)"/>
     <AddButton class="ml-1"
-               v-on:save="$emit('save', $event)"/>
+               :directions="directions" :save="save"/>
     <EditButton class="ml-3"
-                v-on:save="$emit('save', $event)"/>
+                :save="save"/>
     <CollapseButton class="ml-3"
                     :node="node"/>
     <RemoveButton :node="node"/>
@@ -18,6 +18,7 @@ import NaviButton from "@/components/Card/Tool/NaviButton";
 import CollapseButton from "@/components/Card/Tool/CollapseButton";
 import RemoveButton from "@/components/Card/Tool/RemoveButton";
 import EditButton from "@/components/Card/Tool/EditButton";
+import consts from "@/util/const";
 
 export default {
   name: "ToolBar",
@@ -26,6 +27,16 @@ export default {
     node: Object,
     staticView: Boolean,
   },
+  data() {
+    return {
+      directions: consts.directions,
+    }
+  },
+  methods: {
+    save($event) {
+      this.$emit('save', $event)
+    }
+  }
 }
 </script>
 
