@@ -1,10 +1,8 @@
 import lightweightRestful from "vue-lightweight_restful";
 import consts from "@/util/const";
 
-async function updateNode(caller, node, markdown){
-    await lightweightRestful.api.put(consts.api.v1.node.item(node), null, {
-        markdown: markdown
-    }, {
+async function updateNode(caller, id, node){
+    await lightweightRestful.api.put(consts.api.v1.node.item(id), null, node, {
         caller: caller,
         success_msg: 'update successfully'
     })

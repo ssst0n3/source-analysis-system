@@ -18,8 +18,14 @@ type Node struct {
 	Collapsed       bool   `json:"collapsed"`
 }
 
+// UpdateMarkdownBody TODO: remove
 type UpdateMarkdownBody struct {
 	Markdown string `json:"markdown"`
+}
+
+// UpdateCollapsedBody TODO: remove
+type UpdateCollapsedBody struct {
+	Collapsed bool `json:"collapsed"`
 }
 
 var SchemaNode schema.Schema

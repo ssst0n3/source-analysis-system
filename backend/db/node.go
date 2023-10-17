@@ -121,3 +121,13 @@ func UpdateMarkdown(id uint, markdown string) (err error) {
 	}
 	return
 }
+
+func UpdateCollapsed(id uint, collapsed bool) (err error) {
+	err = DB.Debug().Model(model.Node{}).Where("id", id).Update(
+		model.SchemaNode.FieldsByName["Collapsed"].DBName, collapsed).Error
+	if err != nil {
+		awesome_error.CheckErr(err)
+		return
+	}
+	return
+}

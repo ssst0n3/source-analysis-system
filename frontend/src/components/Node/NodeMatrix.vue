@@ -18,10 +18,13 @@
            :ref="'node-'+node.ID" :id="'node-'+node.ID"
            v-for="(node, index2) in col" :key="`col-${index}-row-${index2}`"
            style="display: inline-block; width: 500px; vertical-align:middle" class="ml-5">
-        <MarkdownCard v-if="node.ID !== 0"
+        <MarkdownCard v-if="node.ID !== 0 && !node.collapsed"
                       style="white-space: normal" :id="'card-'+node.ID"
                       :static-view="staticView" :active="focus===node.ID" :size="size" :node="node"
                       v-on:save="save" v-on:navi="navi"/>
+        <div v-else-if="node.collapsed" class="text-center">
+          <CollapseButton :node="node" class="m-auto align-self-center"/>
+        </div>
       </div>
     </div>
     <NodeEditor :static-view="staticView" :node="activeNode" :size="size" :model="editorModel" :root="root"
@@ -41,10 +44,12 @@ import {anchor} from "@/util/util";
 import ToolBar from "@/components/Tool/ToolBar.vue";
 import NodeEditor from "@/components/Node/NodeEditor";
 import NodeRemove from "@/components/Node/NodeRemove";
+import CollapseButton from "@/components/Card/Tool/CollapseButton";
 
 export default {
   name: "NodeMatrix",
   components: {
+    CollapseButton,
     NodeRemove,
     NodeEditor,
     ToolBar, MarkdownCard

@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     success() {
-      this.$bvToast.toast("copied " + this.node.markdown.slice(0, 10) + '...', {
+      this.$bvToast.toast("copied: " + this.node.markdown.slice(0, 10) + '...', {
             title: "Copy " + this.node.ID,
             variant: 'success'
           }

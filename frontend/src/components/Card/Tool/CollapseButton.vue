@@ -1,13 +1,15 @@
 <template>
-  <b-badge pill variant="info" @click.stop="collapse">
+  <b-badge pill variant="info">
     <b-link class="text-white">
-      <b-icon-dash v-if="node.collapsed"></b-icon-dash>
-      <b-icon-dash v-else></b-icon-dash>
+      <b-icon-plus v-if="node.collapsed"></b-icon-plus>
+      <b-icon-dash v-else @click.stop="collapse"></b-icon-dash>
     </b-link>
   </b-badge>
 </template>
 
 <script>
+import {updateNode} from "@/util/node";
+
 export default {
   name: "CollapseButton",
   props: {
@@ -16,7 +18,7 @@ export default {
   methods: {
     collapse() {
       if (confirm(`Are you sure to collapse node ${this.node.ID} ?`)) {
-        alert("TODO: add an collapsed property for each node #9")
+        updateNode(this, this.node.ID, {collapsed: true})
       }
     }
   }
