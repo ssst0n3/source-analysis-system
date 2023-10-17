@@ -35,7 +35,7 @@ export default {
       let content = this.$refs[this.editorRef].edit
       this.$bvModal.hide(this.modalId)
       if (this.model.update) {
-        await updateNode(this, this.node.ID, content)
+        await updateNode(this, this.node.ID, {markdown:content})
         this.$emit('refresh')
       } else {
         let newNodeId = await createNode(this, content)

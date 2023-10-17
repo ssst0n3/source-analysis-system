@@ -20,7 +20,7 @@ func InitRouter(router *gin.Engine) {
 	{
 		nodeGroup.GET("/list/:id", node.ListNodesByRoot)
 		nodeGroup.GET("/matrix/:id", node.Matrix)
-		nodeGroup.PUT("/:id", node.UpdateMarkdown)
+		nodeGroup.PUT("/:id", node.Resource.UpdateResource)
 		nodeGroup.POST("", node.Resource.CreateResource)
 		nodeGroup.DELETE("/:id", node.Resource.DeleteResource)
 	}
