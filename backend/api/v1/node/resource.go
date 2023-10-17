@@ -36,44 +36,6 @@ func Matrix(c *gin.Context) {
 	c.JSON(http.StatusOK, matrix)
 }
 
-func Collapse(c *gin.Context) {
-	id, err := ParseId(c)
-	if err != nil {
-		return
-	}
-	var body model.UpdateCollapsedBody
-	err = c.BindJSON(&body)
-	if err != nil {
-		lightweight_api.HandleStatusBadRequestError(c, err)
-		return
-	}
-	err = db.UpdateCollapsed(uint(id), body.Collapsed)
-	if err != nil {
-		lightweight_api.HandleInternalServerError(c, err)
-		return
-	}
-	c.Status(http.StatusOK)
-}
-
-func UpdateMarkdown(c *gin.Context) {
-	id, err := ParseId(c)
-	if err != nil {
-		return
-	}
-	var body model.UpdateMarkdownBody
-	err = c.BindJSON(&body)
-	if err != nil {
-		lightweight_api.HandleStatusBadRequestError(c, err)
-		return
-	}
-	err = db.UpdateMarkdown(uint(id), body.Markdown)
-	if err != nil {
-		lightweight_api.HandleInternalServerError(c, err)
-		return
-	}
-	c.Status(http.StatusOK)
-}
-
 func ListNodesByRoot(c *gin.Context) {
 	id, err := ParseId(c)
 	if err != nil {
